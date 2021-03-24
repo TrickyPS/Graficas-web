@@ -1,0 +1,184 @@
+html, body {
+  margin: 0px;
+  width:100%;
+  height:100%;
+  overflow: hidden;
+  background:linear-gradient(to top, rgb(252, 252, 252) 59%, cyan 80%, blue 130%);
+  min-height:440px;
+}
+
+
+
+* {
+  font-family: 'Rammetto One', cursive;
+  position:absolute;
+  user-select: none;
+}
+
+.static{
+  position: static;
+}
+
+.cont{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.navbar{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 7rem;
+  height: 100%;
+  z-index: 2;
+}
+
+.navbar *{
+  position: static;
+}
+
+.menu{
+  width: 100%;
+  height: auto;
+}
+
+
+.opc{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0rem;
+  color: #ffffff;
+  font-size: 2.5rem;
+  background-color: rgba(27, 30, 36, 0.8);
+  border-top: solid 1px #ffffff;
+  width: 7rem;
+  height: 60px;
+  text-decoration: none;
+}
+
+.opc >  p{
+  margin: 0%;
+  padding: 3px 0%;
+  font-size: 0.75rem;
+}
+
+
+.right_btns{
+  display: flex;
+  flex-direction: column;
+  width: 7rem;
+  height: 100px;
+  z-index: 2;
+}
+
+.play{
+
+  display: flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items: center;
+  flex-wrap:wrap;
+  position: static;
+  width: 40%;
+  height: 80%;
+  z-index: 2;
+}
+
+.play > p{
+  font-size: 3rem;
+}
+
+.w-100{
+  width: 100%;
+}
+
+.modal *{
+  position: static;
+}
+
+.modal{
+  min-height: 50px;
+}
+
+.opc:hover{
+  border-left: solid #1abc9c 5px;
+  color: #1abc9c;
+  filter: saturate(150%);
+}
+
+
+
+.carousel * {
+  position: static;
+}
+
+
+.carousel {
+  position: static;
+  padding: 20px;
+  perspective: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+.carousel > * {
+  flex: 0 0 auto;
+}
+.carousel figure {
+  margin: 0;
+  width: 50%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+.carousel figure img {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 0px;
+}
+
+
+.carousel figure img:not(:first-of-type) {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.carousel nav {
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 0;
+}
+.carousel nav button {
+  border: 0px;
+  flex: 0 0 auto;
+  margin: 0 5px;
+  cursor: pointer;
+  color: #1abc9c;
+  background: #1b1e24;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+}
+
+
+
+
+.modal>p{
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+
+
+.modal>input{
+  margin-top: 5px;
+  padding: 2px 8px;
+  width: 100%;
+}
+
+
