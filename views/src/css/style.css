@@ -27,6 +27,12 @@ html, body {
   justify-content: space-between;
 }
 
+.ocultar{
+
+  display: none;
+
+
+}
 .navbar{
   display:flex;
   flex-direction: column;
