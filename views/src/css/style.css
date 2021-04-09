@@ -174,14 +174,14 @@ html, body {
 
 
 
-.modal>p{
+.modal> form > p{
   text-align: center;
   font-size: 1.2rem;
 }
 
 
 
-.modal>input{
+.modal> form >input{
   margin-top: 5px;
   padding: 2px 8px;
   width: 100%;

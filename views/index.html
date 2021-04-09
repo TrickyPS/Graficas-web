@@ -20,23 +20,6 @@
   <script src="src/js/index.js" defer></script>
   <script src="src/js/background.js" defer></script>
 
-  <script>
- /*
-    $.ajax({
-      url: "../controllers/getusers.php",
-      type: "POST",
-      dataType: "json",
-      async : true,
-      
-    }).done(function(data){
-      alert("regresa: " + data);
-    }).fail(function(xhr, status, error){
-      alert("Error: " + xhr.statusText + xhr.responseText);
-      
-    });
-
-  */
-  </script>
   <title>The Cruise War</title>
 </head>
 
@@ -143,8 +126,9 @@
 
 <!--Botones Login-->
 
-<a class="login" onclick="SoundClick()"  href="#m_signin" rel="modal:open">Iniciar sesión</a>
-<a class="logup" onclick="SoundClick()"  href="#m_signup" rel="modal:open">Registrarse</a>
+<a class="login" onclick="SoundClick()" id="btnLogin" href="#m_signin" rel="modal:open" style="display: none;">Iniciar sesión</a>
+<a class="logup" onclick="SoundClick()" id="btnLogup" href="#m_signup" rel="modal:open" style="display: none;">Registrarse</a>
+<a class="logut" onclick="SoundClick()" id="btnLogout" style="display: none;">Cerrar sesión</a>
 
 <!--Modales-->
 
@@ -207,38 +191,64 @@
 
 <div id="m_signin" class="modal " >
   <p >Iniciar sesión</p>
-  <label for="user">Usuario o correo:</label>
-  <input type="text" id="user"><br>
-  <label for="clave">Contraseña:</label>
-  <input type="password" id="clave" ><br>
-  <div style="text-align-last: center; width: 100%;">
-  <button class="btn static" onclick="SoundClick()" id="btn_multi">
-    <span class="btn__inner static">
-      <span class="btn__slide" static></span>
-      <span class="btn__content static">Entrar</span>
-    </span>
-  </button>
-  </div>
+  <form action="" id="login-form">
+    <label for="user">Usuario o correo:</label>
+    <input type="text" id="user"><br>
+    <label for="clave">Contraseña:</label>
+    <input type="password" id="clave" ><br>
+    <div style="text-align-last: center; width: 100%;">
+      <button class="btn static" onclick="SoundClick()" id="btn_multi">
+        <span class="btn__inner static">
+        <span class="btn__slide" static></span>
+        <span class="btn__content static">Entrar</span>
+        </span>
+      </button>
+    </div>
+  </form>
 </div>
-<div id="m_signup" class="modal " >
+<div id="m_signup" class="modal" >
   <p >Registrar</p>
-  <label for="r_user">Usuario: </label>
-  <input type="text" id="r_user"><br>
-  <label for="email">Correo: </label>
-  <input type="text" id="email"><br>
-  <label for="r_clave">Contraseña:</label>
-  <input type="password" id="r_clave" ><br>
-<div style="text-align-last: center; width: 100%;">
-  <button class="btn static" onclick="SoundClick()" id="btn_multi">
-    <span class="btn__inner static">
-      <span class="btn__slide" static></span>
-      <span class="btn__content static">Aceptar</span>
-    </span>
-  </button>
-</div>
+  <form action="" id="register-form">
+    <label for="r_user">Usuario: </label>
+    <input type="text" id="r_user"><br>
+    <label for="email">Correo: </label>
+    <input type="email" id="r_email"><br>
+    <label for="r_clave">Contraseña:</label>
+    <input type="password" id="r_password" ><br>
+    <div style="text-align-last: center; width: 100%;">
+      <button type="submit" class="btn static" onclick="SoundClick()" id="btn_multi">
+        <span class="btn__inner static">
+          <span class="btn__slide" static></span>
+          <span class="btn__content static">Aceptar</span>
+        </span>
+      </button>
+    </div>
+  </form>
 </div>
 
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+<script id="Firebase">
+  var firebaseConfig = {
+    apiKey: "AIzaSyD-WLwlfxASSyndVSZ8R31aCeHfYVoBxws",
+    authDomain: "graficasweb-745d9.firebaseapp.com",
+    databaseURL: "https://graficasweb-745d9-default-rtdb.firebaseio.com/",
+    projectId: "graficasweb-745d9",
+    storageBucket: "graficasweb-745d9.appspot.com",
+    messagingSenderId: "762725047745",
+    appId: "1:762725047745:web:440d63ec2d1f90ab34e340",
+    measurementId: "G-BNWMRV61SW"
+  };
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+</script>
 
+<script src="src/js/firebase.js"></script>
+<script src="src/js/auth.js"></script>
     
 </body>
 </html>

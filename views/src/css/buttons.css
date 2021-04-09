@@ -126,7 +126,7 @@
   }
 
 
-.login , .logup{
+.login, .logup, .logut{
   
   border-radius: 0.5rem;
   border: 0px solid  #7D8082;
@@ -153,8 +153,15 @@
   right: 10px;
 }
 
+.logut{
+  background-color: #ece8e1;
+  color:#1b1e24;
+  width: 150px;
+  right: 10px;
+}
 
-.login:hover , .logup:hover{
+
+.login:hover, .logup:hover, .logut:hover{
   font-size: 0.9rem;
 }
 
