@@ -10,6 +10,7 @@ registrarse.addEventListener('submit', (e) => {
     
     auth.createUserWithEmailAndPassword(email, password).then((userCredential) => {
         registrarse.reset();
+        Usuario = new User(null, user, email, password).addUser();
     });
 });
 
@@ -21,6 +22,7 @@ iniciarSesion.addEventListener('submit', (e) => {
 
     auth.signInWithEmailAndPassword(user, password).then((userCredential) => {
         iniciarSesion.reset();
+        var UserModel = new User(null, null, user, password).getUserByEmail();
     });
 });
 
@@ -33,12 +35,14 @@ cerrarSesion.addEventListener("click", (e) => {
 
 auth.onAuthStateChanged((user) => {
     if (user) {
+      var UserModel = new User(null, null, user.email, null).getUserByEmail();
       console.log("signin");
       $('#btnLogin').hide();
       $('#btnLogup').hide();
       $('#btnLogout').show();
     } else {
       console.log("signout");
+      window.localStorage.removeItem('user');
       $('#btnLogout').hide();
       $('#btnLogin').show();
       $('#btnLogup').show();
