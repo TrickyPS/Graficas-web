@@ -83,7 +83,7 @@
   <script type="module">
     import { GLTFLoader } from "../views/src/js/GLTFLoader.js";
     // MAIN
-
+    var battleShip;
     //IMAGES SKYDOME
 
 
@@ -93,7 +93,7 @@
 
     // standard global variables
     var container, scene, camera, renderer, controls, stats, skyboxGeo, skybox;
-    var keyboard = new KeyboardState();
+    var keyboard = new THREEx.KeyboardState();
     var clock = new THREE.Clock();
 
     // custom global variables
@@ -155,7 +155,7 @@
       floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
       floorTexture.repeat.set(10, 10);
       var floorMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
-      var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
+      var floorGeometry = new THREE.PlaneGeometry(10000, 10000, 10, 10);
       var floor = new THREE.Mesh(floorGeometry, floorMaterial);
       floor.position.y = -0.5;
       floor.rotation.x = Math.PI / 2;
@@ -169,26 +169,22 @@
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_lf.png"), side: THREE.BackSide })
       ];
 
-
-
       var cubematerial = new THREE.MeshFaceMaterial(cubemat);
 
       skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
 
-    /*   skybox = new THREE.Mesh(skyboxGeo,cubematerial);
-      scene.add(skybox); */
-      
 
-      var cube = new THREE.Mesh(skyboxGeo,cubematerial)
+
+      var cube = new THREE.Mesh(skyboxGeo, cubematerial)
       cube.position.x = 0;
       scene.add(cube);
       ////////////
       // CUSTOM //
       ////////////
-      const loader = new GLTFLoader().setPath('../views/src/assets/gltf/Ships/');
-      loader.load('Mogami.gltf', (gltf) => {
+      var loader = new GLTFLoader().setPath('../views/src/assets/gltf/Ships/');
+      loader.load('barco1.gltf', (gltf) => {
 
-        const battleShip = gltf.scene;
+        battleShip = gltf.scene;
 
         battleShip.position.x = 0;
         battleShip.position.y = 3;
@@ -200,7 +196,11 @@
 
 
 
+
+
     }
+
+
 
     function animate() {
       requestAnimationFrame(animate);
@@ -209,9 +209,42 @@
     }
 
     function update() {
-      if (keyboard.pressed("z")) {
-        // do something
-      }
+
+
+
+      var delta = clock.getDelta(); // seconds.
+      var moveDistance = 200 * delta; // 200 pixels per second
+      var rotateAngle = Math.PI / 2 * delta;
+      var rotation_matrix = new THREE.Matrix4().identity();
+ 
+ 	// global coordinates
+   if ( keyboard.pressed("left")){
+    battleShip.position.x -= moveDistance;
+    battleShip.rotation.y = 0;
+   }
+   
+	else if ( keyboard.pressed("right") ){
+
+    battleShip.position.x += moveDistance;
+  
+    battleShip.rotation.y = 3.14159;
+  }
+	else	if ( keyboard.pressed("up") ){
+    battleShip.position.z -= moveDistance;
+    battleShip.rotation.y = 4.71239;
+  }
+ 
+	else	if ( keyboard.pressed("down") ){
+    battleShip.position.z += moveDistance;
+    battleShip.rotation.y = 1.5708;
+  }
+  
+		
+
+
+
+
+
 
       controls.update();
       stats.update();
