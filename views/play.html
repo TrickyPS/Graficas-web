@@ -84,7 +84,14 @@
     import { GLTFLoader } from "../views/src/js/GLTFLoader.js";
     // MAIN
     var battleShip;
+    var pared;
+    var rueda;
+    var rueda2;
+    var firstBB;
+    var secondBB;
+    var collision;
     //IMAGES SKYDOME
+
 
 
 
@@ -145,39 +152,34 @@
 
       // LIGHT
       var light = new THREE.PointLight(0xffffff);
-      light.position.set(100, 250, 100);
+      light.position.set(2000, 0, 0);
       scene.add(light);
 
 
 
       // FLOOR
-      var floorTexture = new THREE.ImageUtils.loadTexture('images/checkerboard.jpg');
-      floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-      floorTexture.repeat.set(10, 10);
-      var floorMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
-      var floorGeometry = new THREE.PlaneGeometry(10000, 10000, 10, 10);
+
+      var floorMaterial = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/lava.jpg"), side: THREE.DoubleSide });
+      var floorGeometry = new THREE.PlaneGeometry(5000, 5000, 10, 10);
       var floor = new THREE.Mesh(floorGeometry, floorMaterial);
       floor.position.y = -0.5;
       floor.rotation.x = Math.PI / 2;
       scene.add(floor);
       var cubemat = [
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_bk.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_up.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_dn.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_rt.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_lf.png"), side: THREE.BackSide })
-      ];
+          new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_ft.png"), side: THREE.BackSide }),
+          new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_bk.png"), side: THREE.BackSide }),
+          new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_up.png"), side: THREE.BackSide }),
+          new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_dn.png"), side: THREE.BackSide }),
+          new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_rt.png"), side: THREE.BackSide }),
+          new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_lf.png"), side: THREE.BackSide })
+        ];
+        var cubematerial = new THREE.MeshFaceMaterial(cubemat);
+        skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+        var cube = new THREE.Mesh(skyboxGeo, cubematerial)
+        cube.position.x = 0;
+        scene.add(cube); 
+      
 
-      var cubematerial = new THREE.MeshFaceMaterial(cubemat);
-
-      skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
-
-
-
-      var cube = new THREE.Mesh(skyboxGeo, cubematerial)
-      cube.position.x = 0;
-      scene.add(cube);
       ////////////
       // CUSTOM //
       ////////////
@@ -191,6 +193,43 @@
         battleShip.name = "battleShip";
 
         scene.add(battleShip);
+
+      });
+
+
+      loader.load('volcan.gltf', (gltf) => {
+
+        pared = gltf.scene;
+
+        pared.position.x = 10;
+        pared.position.y = 5;
+
+        pared.name = "pared";
+
+        scene.add(pared);
+
+      });
+
+
+      loader.load('rueda.gltf', (gltf) => {
+
+        rueda = gltf.scene;
+
+        rueda.position.x = 20;
+        rueda.position.z = 500;
+        rueda.position.y = 5;
+
+        rueda.name = "rueda";
+        scene.add(rueda);
+
+
+        rueda2 = rueda.clone();
+
+        rueda2.position.x = 100;
+        rueda2.name = "rueda2";
+        scene.add(rueda2);
+
+
 
       });
 
@@ -210,41 +249,43 @@
 
     function update() {
 
+      function colisionBloques() {
 
+        if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
+          console.log("joto");
+        }
+
+      }
 
       var delta = clock.getDelta(); // seconds.
-      var moveDistance = 200 * delta; // 200 pixels per second
+      var moveDistance = 600 * delta; // 200 pixels per second
       var rotateAngle = Math.PI / 2 * delta;
       var rotation_matrix = new THREE.Matrix4().identity();
- 
- 	// global coordinates
-   if ( keyboard.pressed("left")){
-    battleShip.position.x -= moveDistance;
-    battleShip.rotation.y = 0;
-   }
-   
-	else if ( keyboard.pressed("right") ){
 
-    battleShip.position.x += moveDistance;
-  
-    battleShip.rotation.y = 3.14159;
-  }
-	else	if ( keyboard.pressed("up") ){
-    battleShip.position.z -= moveDistance;
-    battleShip.rotation.y = 4.71239;
-  }
- 
-	else	if ( keyboard.pressed("down") ){
-    battleShip.position.z += moveDistance;
-    battleShip.rotation.y = 1.5708;
-  }
-  
-		
+      // global coordinates
+      if (keyboard.pressed("left")) {
+        battleShip.position.x -= moveDistance;
+        battleShip.rotation.y = 0;
+      }
+
+      else if (keyboard.pressed("right")) {
+
+        battleShip.position.x += moveDistance;
+
+        battleShip.rotation.y = 3.14159;
+      }
+      else if (keyboard.pressed("up")) {
+        battleShip.position.z -= moveDistance;
+        battleShip.rotation.y = 4.71239;
+      }
+
+      else if (keyboard.pressed("down")) {
+        battleShip.position.z += moveDistance;
+        battleShip.rotation.y = 1.5708;
+      }
 
 
-
-
-
+      colisionBloques();
 
       controls.update();
       stats.update();
