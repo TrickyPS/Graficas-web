@@ -87,6 +87,11 @@
     var pared;
     var rueda;
     var rueda2;
+    var estatua;
+    var rock;
+    var powerUpHeal;
+    var powerUpShield;
+    var powerUpRocket;
     var firstBB;
     var secondBB;
     var collision;
@@ -228,13 +233,73 @@
         rueda2.position.x = 100;
         rueda2.name = "rueda2";
         scene.add(rueda2);
+      
+      });
 
+      loader.load('estatua.gltf', (gltf) => {
 
+        estatua = gltf.scene;
+
+        estatua.position.x = -1500;
+        estatua.position.z = 1200;
+        estatua.position.y = 30;
+
+        estatua.name = "estatua";
+        scene.add(estatua);
 
       });
 
+      loader.load('rock.gltf', (gltf) => {
 
+        rock = gltf.scene;
 
+        rock.position.x = 1200;
+        rock.position.z = -1000;
+        rock.position.y = 30;
+
+        rock.name = "rock";
+        scene.add(rock);
+
+      });
+
+      loader.load('powerUpHeal.gltf', (gltf) => {
+
+        powerUpHeal = gltf.scene;
+
+        powerUpHeal.position.x = 1200;
+        powerUpHeal.position.z = 1000;
+        powerUpHeal.position.y = 100;
+
+        powerUpHeal.name = "powerUpHeal";
+        scene.add(powerUpHeal);
+
+      });
+
+      loader.load('powerUpShield.gltf', (gltf) => {
+
+        powerUpShield = gltf.scene;
+
+        powerUpShield.position.x = -1200;
+        powerUpShield.position.z = -1000;
+        powerUpShield.position.y = 100;
+
+        powerUpShield.name = "powerUpShield";
+        scene.add(powerUpShield);
+
+      });
+
+      loader.load('powerUpRocket.gltf', (gltf) => {
+
+        powerUpRocket = gltf.scene;
+
+        powerUpRocket.position.x = 600;
+        powerUpRocket.position.z = 100;
+        powerUpRocket.position.y = 100;
+
+        powerUpRocket.name = "powerUpRocket";
+        scene.add(powerUpRocket);
+
+      });
 
 
     }
@@ -261,6 +326,9 @@
       var moveDistance = 600 * delta; // 200 pixels per second
       var rotateAngle = Math.PI / 2 * delta;
       var rotation_matrix = new THREE.Matrix4().identity();
+      var powerUpHeal = scene.getObjectByName("powerUpHeal");
+      var powerUpShield = scene.getObjectByName("powerUpShield");
+      var powerUpRocket = scene.getObjectByName("powerUpRocket");
 
       // global coordinates
       if (keyboard.pressed("left")) {
@@ -284,6 +352,9 @@
         battleShip.rotation.y = 1.5708;
       }
 
+      powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
+      powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
+      powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
 
       colisionBloques();
 
