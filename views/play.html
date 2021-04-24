@@ -15,25 +15,34 @@
   <link rel="stylesheet" href="src/css/play.css">
   <link rel="stylesheet" href="src/css/toltip.css">
   <link rel="stylesheet" href="src/css/base.css">
-  <!--   SCRIPTS -->
-  <script src="src/js/jquery-3.6.0.min.js"></script>
-  <script src="src/js/jquerymodal.js" defer></script>
-  <script src="src/js/index.js" defer></script>
-  <script src="src/js/Three.js"></script>
-  <script src="src/js/Detector.js"></script>
-  <script src="src/js/Stats.js"></script>
-  <script src="src/js/OrbitControls.js"></script>
-  <script src="src/js/KeyboardState.js"></script>
-  <script src="src/js/THREEx.FullScreen.js"></script>
-  <script src="src/js/THREEx.WindowResize.js"></script>
-
-  <script src="src/js/firebase.js" defer></script>
+ 
 
 
   <title>Play</title>
 </head>
 
 <body>
+ <!--   SCRIPTS -->
+ <script src="src/js/jquery-3.6.0.min.js"></script>
+ <script src="src/js/jquerymodal.js" defer></script>
+ <script src="src/js/index.js" defer></script>
+ <script src="src/js/Three.js"></script>
+ <script src="src/js/Detector.js"></script>
+ <script src="src/js/Stats.js"></script>
+ <script src="src/js/OrbitControls.js"></script>
+ <script src="src/js/KeyboardState.js"></script>
+ <script src="src/js/THREEx.FullScreen.js"></script>
+ <script src="src/js/THREEx.WindowResize.js"></script>
+ <script src="src/js/ParticleEngine.js"></script>
+ <script src="src/js/ParticleEngineExamples.js"></script>
+ <script src="src/js/firebase.js" defer></script>
+
+
+
+
+
+
+
   <div>
     <audio id="soundclick" src="assets/button-34.wav"></audio>
     <div class="container" style="display: none;">
@@ -157,7 +166,8 @@
 
 
       var light = new THREE.DirectionalLight(0xffffff);
-      light.position.set(1, 10,1);
+      light.position.set(1, 1, 1);
+      light.intensity = 3;
       scene.add(light);
 
       // FLOOR
