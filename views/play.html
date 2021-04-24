@@ -165,10 +165,21 @@
 
 
 
-      var light = new THREE.DirectionalLight(0xffffff);
-      light.position.set(1, 1, 1);
-      light.intensity = 3;
-      scene.add(light);
+      //Iluminación 
+    var ambientLight = new THREE.AmbientLight(
+        new THREE.Color(1, 1, 1),
+        0.5
+    );
+
+    var directionalLight = new THREE.DirectionalLight(
+        new THREE.Color(133, 23, 0),
+        0.1
+    );
+
+    directionalLight.position.set(0, 2, 1);
+
+    scene.add( ambientLight );
+    scene.add( directionalLight );
 
       // FLOOR
       texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/lava.jpg");
