@@ -22,6 +22,7 @@ iniciarSesion.addEventListener('submit', (e) => {
 
     auth.signInWithEmailAndPassword(user, password).then((userCredential) => {
         iniciarSesion.reset();
+       
         var UserModel = new User(null, null, user, password).getUserByEmail();
     });
 });
@@ -43,6 +44,8 @@ auth.onAuthStateChanged((user) => {
     } else {
       console.log("signout");
       window.localStorage.removeItem('user');
+      window.localStorage.removeItem("modo");
+      window.localStorage.removeItem("mapa");
       $('#btnLogout').hide();
       $('#btnLogin').show();
       $('#btnLogup').show();

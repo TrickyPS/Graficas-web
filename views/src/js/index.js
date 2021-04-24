@@ -5,6 +5,7 @@ function SoundClick(){
 
 
 
+
 $("#btn_pc").click(function(){
     $(this).hide();
     $("#btn_multi").hide();
@@ -15,6 +16,10 @@ $("#btn_pc").click(function(){
 });
 
 $("#btn_multi").click(function(){
+
+    window.localStorage.setItem("modo","multijugador");
+    window.localStorage.setItem("mapa",1);
+
     $(this).hide();
     $("#btn_pc").hide();
     $('#btn_back').show();
@@ -24,6 +29,8 @@ $("#btn_multi").click(function(){
 });
 
 $("#btn_back").click(function(){
+  window.localStorage.removeItem("modo");
+  window.localStorage.removeItem("mapa");
     $(this).hide();
     $('#btn_empezar').hide();
     $("#btn_pc").show();
@@ -51,6 +58,7 @@ $("#btn_multi").click(function(){
 
   for (var i = 0; i < carousels.length; i++) {
     carousel(carousels[i]);
+   
   }
 });
 
@@ -105,12 +113,13 @@ function carousel(root) {
         return;
       
       if (t.classList.contains('next')) {
+
         currImage++;
       }
       else {
         currImage--;
       }
-      
+      //alert(currImage);
       rotateCarousel(currImage);
     }
       

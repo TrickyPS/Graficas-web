@@ -19,7 +19,8 @@
  <script src="src/js/jquerymodal.js" defer></script>
   <script src="src/js/index.js" defer></script>
   <script src="src/js/background.js" defer></script>
-  <script src="src/js/controllers/user.js"></script>
+  <script src="src/js/controllers/user.js" defer></script>
+
 
   <title>The Cruise War</title>
 </head>
@@ -181,7 +182,7 @@
     <span class="range-slider__value">0</span>
   </div>
   <div style="text-align-last: center; width: 100%;">
-    <button class="btn static" onclick="SoundClick()" id="btn_multi">
+    <button class="btn static" onclick="SoundClick()" >
       <span class="btn__inner static">
         <span class="btn__slide" static></span>
         <span class="btn__content static">Guardar</span>
@@ -198,7 +199,7 @@
     <label for="clave">Contraseña:</label>
     <input type="password" id="clave" ><br>
     <div style="text-align-last: center; width: 100%;">
-      <button class="btn static" onclick="SoundClick()" id="btn_multi">
+      <button class="btn static" onclick="SoundClick()" >
         <span class="btn__inner static">
         <span class="btn__slide" static></span>
         <span class="btn__content static">Entrar</span>
@@ -211,13 +212,13 @@
   <p >Registrar</p>
   <form action="" id="register-form">
     <label for="r_user">Usuario: </label>
-    <input type="text" id="r_user"><br>
+    <input type="text" id="r_user" ><br>
     <label for="email">Correo: </label>
     <input type="email" id="r_email"><br>
     <label for="r_clave">Contraseña:</label>
     <input type="password" id="r_password" ><br>
     <div style="text-align-last: center; width: 100%;">
-      <button type="submit" class="btn static" onclick="SoundClick()" id="btn_multi">
+      <button type="submit" class="btn static" onclick="SoundClick()" id="btnSignUp">
         <span class="btn__inner static">
           <span class="btn__slide" static></span>
           <span class="btn__content static">Aceptar</span>
@@ -248,7 +249,6 @@
   const auth = firebase.auth();
 </script>
 
-<script src="src/js/firebase.js"></script>
 <script src="src/js/auth.js"></script>
     
 </body>

@@ -1,4 +1,5 @@
 <?php
+
 $action = $_POST['action'];
 
 
@@ -15,6 +16,7 @@ else if($action == "getUserByEmail") {
 
 
 function addUser() {
+    
     $userName = $_POST["userName"];
     $email = $_POST["email"];
     $password = $_POST["password"];
@@ -24,7 +26,7 @@ function addUser() {
     $result = $mysqli->query("INSERT INTO users(userName, email, userPassword) values('".$userName."','".$email."','".$password."')");
 
     if (!$result) {
-        echo "Problema al hacer un query: " . $mysqli->error;								
+        echo json_encode( "Problema al hacer un query: " . $mysqli->error);								
     } else {
         getUserByEmail($email);
     }
