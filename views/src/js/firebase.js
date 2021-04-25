@@ -4,9 +4,10 @@ const mapa = window.localStorage.getItem("mapa");
 const dataUser = jQuery.parseJSON(window.localStorage.getItem("user"));
 var userList = [];
 var userKeys = [];
-var enemy ;
-var myPlayer;
-var vsPlayer;
+var enemy = null ;
+var myPlayer = null;
+var vsPlayer = null;
+
 
 var user =  {
   
@@ -49,10 +50,10 @@ var user =  {
         for(var i = 0; i< userList.length; i++ ){
             for(var j = 0; j < userList.length; i++){
                 if(userList[i].emparejado == false && userList[j].emparejado == false && userList[i].id != userList[j].id){
-                    var myPlayer = i;
-                    var vsPlayer= j;
+                    myPlayer = i;
+                    vsPlayer= j;
+                    userList[myPlayer].emparejado = true;
                     const dbRefPlayers =  firebase.database().ref().child(`pairing/${ userKeys[myPlayer] }`);
-                  
                     
                     dbRefPlayers.update({
                          emparejado: true,
@@ -76,7 +77,11 @@ var user =  {
 
 
     dbRefPairing.on("child_changed",(snap)=>{
+        
+        
         var player = snap.val;
+      
+      
         if(player.id == vsPlayer  && player.emparejado == true && player.finalizado == false){
             //Actualizacion de datos del enemigo
             enemy = player;
@@ -86,10 +91,12 @@ var user =  {
 
 
 
+
 //funcion para actualizar los datos del jugador y subirlos a firebase
 
 
 function updatePlayer(position,rotation,HP,escudo){
+    
     const dbRefPlayer =  firebase.database().ref().child(`pairing/${ userKeys[myPlayer] }`);
 		dbRefPlayer.update({
            position,
