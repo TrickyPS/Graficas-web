@@ -15,27 +15,27 @@
   <link rel="stylesheet" href="src/css/play.css">
   <link rel="stylesheet" href="src/css/toltip.css">
   <link rel="stylesheet" href="src/css/base.css">
- 
+
 
 
   <title>Play</title>
 </head>
 
 <body>
- <!--   SCRIPTS -->
- <script src="src/js/jquery-3.6.0.min.js"></script>
- <script src="src/js/jquerymodal.js" defer></script>
- <script src="src/js/index.js" defer></script>
- <script src="src/js/Three.js"></script>
- <script src="src/js/Detector.js"></script>
- <script src="src/js/Stats.js"></script>
- <script src="src/js/OrbitControls.js"></script>
- <script src="src/js/KeyboardState.js"></script>
- <script src="src/js/THREEx.FullScreen.js"></script>
- <script src="src/js/THREEx.WindowResize.js"></script>
- <script src="src/js/ParticleEngine.js"></script>
- <script src="src/js/ParticleEngineExamples.js"></script>
- <script src="src/js/firebase.js" defer></script>
+  <!--   SCRIPTS -->
+  <script src="src/js/jquery-3.6.0.min.js"></script>
+  <script src="src/js/jquerymodal.js" defer></script>
+  <script src="src/js/index.js" defer></script>
+  <script src="src/js/Three.js"></script>
+  <script src="src/js/Detector.js"></script>
+  <script src="src/js/Stats.js"></script>
+  <script src="src/js/OrbitControls.js"></script>
+  <script src="src/js/KeyboardState.js"></script>
+  <script src="src/js/THREEx.FullScreen.js"></script>
+  <script src="src/js/THREEx.WindowResize.js"></script>
+  <script src="src/js/ParticleEngine.js"></script>
+  <script src="src/js/ParticleEngineExamples.js"></script>
+  <script src="src/js/firebase.js" defer></script>
 
 
 
@@ -106,6 +106,7 @@
     var collision;
     var texturat;
     var rock2;
+    var ovni;
     //IMAGES SKYDOME
 
 
@@ -127,6 +128,7 @@
 
     // FUNCTIONS 		
     function init() {
+
       // SCENE
       scene = new THREE.Scene();
       // CAMERA
@@ -164,22 +166,34 @@
       container.appendChild(stats.domElement);
 
 
+      /*     //SPOTLIGHT FOR LIFEHEALTH
+          var spotLight = new THREE.SpotLight(0xff00cc);
+          spotLight.position.x=1200;
+          spotLight.position.y=1000;
+          spotLight.position.=100;
+          scene.add(spotLight);
+     */
+      // SPOTLIGHT
+      var spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(1200, 1000, 100);
+      scene.add(spotLight);
+
 
       //Iluminación 
-    var ambientLight = new THREE.AmbientLight(
+      var ambientLight = new THREE.AmbientLight(
         new THREE.Color(1, 1, 1),
         0.5
-    );
+      );
 
-    var directionalLight = new THREE.DirectionalLight(
-        new THREE.Color(133, 23, 0),
-        0.1
-    );
+      var directionalLight = new THREE.DirectionalLight(
+        new THREE.Color(0xFFFFFF),
+        7
+      );
 
-    directionalLight.position.set(0, 2, 1);
+      directionalLight.position.set(0, 2, 1);
 
-    scene.add( ambientLight );
-    scene.add( directionalLight );
+      scene.add(ambientLight);
+      scene.add(directionalLight);
 
       // FLOOR
       texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/lava.jpg");
@@ -228,7 +242,8 @@
         pared = gltf.scene;
 
         pared.position.x = 10;
-        pared.position.y = 5;
+        pared.position.y = 200;
+        pared.position.z = -1200;
 
         pared.name = "pared";
 
@@ -332,6 +347,18 @@
 
       });
 
+      loader.load('ovni.gltf', (gltf) => {
+
+        ovni = gltf.scene;
+
+        ovni.position.x = 180;
+        ovni.position.y = 1100;
+        ovni.position.z = -1200;
+
+        ovni.name = "ovni";
+        scene.add(ovni);
+
+      });
 
     }
 
@@ -386,6 +413,7 @@
       powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
+      ovni.rotation.y += THREE.Math.degToRad(70) * delta;
 
       colisionBloques();
 
