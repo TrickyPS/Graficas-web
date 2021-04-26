@@ -35,7 +35,7 @@
   <script src="src/js/THREEx.WindowResize.js"></script>
   <script src="src/js/ParticleEngine.js"></script>
   <script src="src/js/ParticleEngineExamples.js"></script>
-  <script src="src/js/firebase.js" defer></script>
+  <!--<script src="src/js/firebase.js" defer></script>-->
 
 
 
@@ -258,28 +258,7 @@
 
         pared.name = "pared";
 
-       // scene.add(pared);
-
-      });
-
-
-      loader.load('rueda.gltf', (gltf) => {
-
-        rueda = gltf.scene;
-
-        rueda.position.x = 20;
-        rueda.position.z = 500;
-        rueda.position.y = 5;
-
-        rueda.name = "rueda";
-        //scene.add(rueda);
-
-
-        rueda2 = rueda.clone();
-
-        rueda2.position.x = 100;
-        rueda2.name = "rueda2";
-        //scene.add(rueda2);
+        scene.add(pared);
 
       });
 
@@ -422,7 +401,7 @@
       }
 
       
-      if(myPlayer != null){
+      /*if(myPlayer != null){
         
 
       updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z },
@@ -439,7 +418,7 @@
       enemyCharter.rotation.y = enemy.rotation.y;
       enemyCharter.rotation.z = enemy.rotation.z;
         }
-
+        */
 
       powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;

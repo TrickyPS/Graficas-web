@@ -23,7 +23,7 @@ $("#btn_multi").click(function(){
     $(this).hide();
     $("#btn_pc").hide();
     $('#btn_back').show();
-    $('#btn_empezar').show();
+    $('#btn_empezar_multi').show();
     $('#logo').hide();
     $('#carousel').show();
 });
@@ -33,6 +33,7 @@ $("#btn_back").click(function(){
   window.localStorage.removeItem("mapa");
     $(this).hide();
     $('#btn_empezar').hide();
+    $('#btn_empezar_multi').hide();
     $("#btn_pc").show();
     $("#btn_multi").show();
     $('#logo').show();
