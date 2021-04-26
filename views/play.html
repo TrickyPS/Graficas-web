@@ -93,6 +93,7 @@
     import { GLTFLoader } from "../views/src/js/GLTFLoader.js";
     // MAIN
     var battleShip;
+    var enemyCharter;
     var pared;
     var rueda;
     var rueda2;
@@ -232,7 +233,17 @@
         battleShip.position.y = 3;
         battleShip.name = "battleShip";
 
+
+
+
+
         scene.add(battleShip);
+
+
+
+        enemyCharter = battleShip.clone()
+        
+        scene.add(enemyCharter);
 
       });
 
@@ -247,7 +258,7 @@
 
         pared.name = "pared";
 
-        scene.add(pared);
+       // scene.add(pared);
 
       });
 
@@ -409,6 +420,26 @@
         battleShip.position.z += moveDistance;
         battleShip.rotation.y = 1.5708;
       }
+
+      
+      if(myPlayer != null){
+        
+
+      updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z },
+      {x:battleShip.rotation.x,y:battleShip.rotation.y,z:battleShip.rotation.z},
+      4,{enable: false, time : 0 } );
+      }
+
+        if(enemy != null ){
+        
+      enemyCharter.position.x = enemy.position.x;
+      enemyCharter.position.y = enemy.position.y;
+      enemyCharter.position.z = enemy.position.z;
+      enemyCharter.rotation.x = enemy.rotation.x;
+      enemyCharter.rotation.y = enemy.rotation.y;
+      enemyCharter.rotation.z = enemy.rotation.z;
+        }
+
 
       powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
