@@ -33,15 +33,7 @@
   <script src="src/js/KeyboardState.js"></script>
   <script src="src/js/THREEx.FullScreen.js"></script>
   <script src="src/js/THREEx.WindowResize.js"></script>
-  <script src="src/js/ParticleEngine.js"></script>
-  <script src="src/js/ParticleEngineExamples.js"></script>
   <script src="src/js/firebase.js" defer></script>
-
-
-
-
-
-
 
   <div>
     <audio id="soundclick" src="assets/button-34.wav"></audio>
@@ -130,15 +122,27 @@
     // FUNCTIONS 		
     function init() {
 
+
+      //#region todo contenido
+
       // SCENE
       scene = new THREE.Scene();
       // CAMERA
       var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+
       var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+
       camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+
       scene.add(camera);
+
       camera.position.set(0, 150, 400);
+
       camera.lookAt(scene.position);
+
+
+
+
       // RENDERER
       if (Detector.webgl)
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -219,6 +223,8 @@
       var cube = new THREE.Mesh(skyboxGeo, cubematerial)
       cube.position.x = 0;
       scene.add(cube);
+
+
 
 
       ////////////
@@ -383,13 +389,7 @@
 
     function update() {
 
-      function colisionBloques() {
 
-        if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
-          console.log("joto");
-        }
-
-      }
 
       var delta = clock.getDelta(); // seconds.
       var moveDistance = 600 * delta; // 200 pixels per second
@@ -446,7 +446,7 @@
       powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
       ovni.rotation.y += THREE.Math.degToRad(70) * delta;
 
-      colisionBloques();
+
 
       controls.update();
       stats.update();
@@ -456,6 +456,9 @@
       texturat.offset.x += .00035;
       renderer.render(scene, camera);
     }
+
+
+//#endregion
 
   </script>
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
