@@ -385,9 +385,9 @@
 
       function colisionBloques() {
 
-        if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
-          console.log("joto");
-        }
+       // if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
+        //  console.log("joto");
+       // }
 
       }
 
@@ -422,7 +422,7 @@
       }
 
       
-      if(myPlayer != null){
+      if(vsPlayer != null){
         
 
       updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z },
@@ -438,6 +438,7 @@
       enemyCharter.rotation.x = enemy.rotation.x;
       enemyCharter.rotation.y = enemy.rotation.y;
       enemyCharter.rotation.z = enemy.rotation.z;
+     
         }
 
 

@@ -9,13 +9,8 @@ var myPlayer = null;
 var vsPlayer = null;
 
 
-var user =  {
-  
-    };
-
-  
-  
-
+if(dataUser != null){
+    
     var addUserParing = dbRefPairing.push();
     addUserParing.set({
     mapa: mapa,
@@ -34,11 +29,15 @@ var user =  {
         
        
     });
+}
+  
+  
+
 
     dbRefPairing.on("child_added",(snap)=>{
         var player = snap.val();
         var key = snap.key;
-        
+       
         
        if(player.emparejado == false){
         userList.push(player);
@@ -48,8 +47,8 @@ var user =  {
      if(userList.length > 1){
 
         for(var i = 0; i< userList.length; i++ ){
-            for(var j = 0; j < userList.length; i++){
-                if(userList[i].emparejado == false && userList[j].emparejado == false && userList[i].id != userList[j].id){
+            for(var j = 0; j < userList.length; j++){
+                if(userList[i].emparejado == false && userList[j].emparejado == false && userList[i].id != userList[j].id && userList[i].id == dataUser.id){
                     myPlayer = i;
                     vsPlayer= j;
                     userList[myPlayer].emparejado = true;
@@ -78,14 +77,24 @@ var user =  {
 
     dbRefPairing.on("child_changed",(snap)=>{
         
+        var player = snap.val();
+        var keyvs = snap.key
+       
+      
+      
         
-        var player = snap.val;
+  
+           if(keyvs == userKeys[vsPlayer]  && player.emparejado == true && player.finalizado == false){
+                //Actualizacion de datos del enemigo
+               enemy = player;
+              
+         }
+            
+       
       
       
-        if(player.id == vsPlayer  && player.emparejado == true && player.finalizado == false){
-            //Actualizacion de datos del enemigo
-            enemy = player;
-        }
+      
+        
     });
 
 
