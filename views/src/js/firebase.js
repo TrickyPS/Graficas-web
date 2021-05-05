@@ -25,9 +25,8 @@ if(dataUser != null){
     escudo:{
         enable: false,
         time : 0
-         }
-        
-       
+    },
+    bulletPosition : {x:0 , y:0, z:0} 
     });
 }
   
@@ -104,14 +103,15 @@ if(dataUser != null){
 //funcion para actualizar los datos del jugador y subirlos a firebase
 
 
-function updatePlayer(position,rotation,HP,escudo){
+function updatePlayer(position,rotation,HP,escudo, bulletPosition){
     
     const dbRefPlayer =  firebase.database().ref().child(`pairing/${ userKeys[myPlayer] }`);
 		dbRefPlayer.update({
            position,
            rotation,
            HP,
-           escudo
+           escudo,
+           bulletPosition
        })
 }
 
