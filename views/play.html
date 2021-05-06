@@ -112,12 +112,14 @@
 
     //Bullets
     var bullet;
-    var enemyBullet; 
+    var enemyBullet;
     var bullets = [];
     var bulletAlive = false;
     var bulletsPlayer = 5;
 
-
+    var objetosCol = []
+  
+    var myHp = 0;  
 
 
 
@@ -243,22 +245,25 @@
 
         battleShip = gltf.scene;
 
-        battleShip.position.x = 0;
+        battleShip.position.x = 300;
         battleShip.position.y = 3;
+        battleShip.position.z = 2000;
+        battleShip.rotation.y = 80;
         battleShip.name = "battleShip";
-
-
-
-
 
         scene.add(battleShip);
 
-
-
         enemyCharter = battleShip.clone()
-        
+
+        enemyCharter.position.x = 300;
+        enemyCharter.position.y = 3;
+        enemyCharter.position.z = -2000;
+        enemyCharter.rotation.y = -80;
+        enemyCharter.name = "enemyCharter";
+
         scene.add(enemyCharter);
 
+        objetosCol.push(enemyCharter);
       });
 
 
@@ -272,7 +277,7 @@
 
         pared.name = "pared";
 
-       // scene.add(pared);
+        // scene.add(pared);
 
       });
 
@@ -308,6 +313,7 @@
         estatua.name = "estatua";
         scene.add(estatua);
 
+        objetosCol.push(estatua);
       });
 
       loader.load('rock.gltf', (gltf) => {
@@ -328,9 +334,8 @@
         rock2.name = "rock2";
         scene.add(rock2);
 
-
-
-
+        objetosCol.push(rock);
+        objetosCol.push(rock2);
       });
 
       loader.load('powerUpHeal.gltf', (gltf) => {
@@ -384,7 +389,7 @@
         scene.add(ovni);
 
       });
-      
+
       loader.load('bullet.gltf', (gltf) => {
 
         enemyBullet = gltf.scene;
@@ -394,9 +399,9 @@
         bullet = enemyBullet.clone();
 
       });
-      
+
       //#endregion
-      
+
     }
 
 
@@ -411,9 +416,9 @@
 
       function colisionBloques() {
 
-       // if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
+        // if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
         //  console.log("joto");
-       // }
+        // }
 
       }
 
@@ -447,9 +452,9 @@
         battleShip.rotation.y = 1.5708;
       }
 
-      for(var i = 0; i < bullets.length; i += 1) {
-        if(bullets[i] === undefined) continue;
-        if(bullets[i].alive == false) {
+      for (var i = 0; i < bullets.length; i += 1) {
+        if (bullets[i] === undefined) continue;
+        if (bullets[i].alive == false) {
           bullets.splice(i, 1);
           continue
         }
@@ -457,11 +462,13 @@
         bullets[i].position.add(bullets[i].velocity);
       }
 
-      if(keyboard.pressed("space") && bulletAlive != true) {
-        if(bulletsPlayer != 0) {
+      colisionBullet();
+
+      if (keyboard.pressed("space") && bulletAlive != true) {
+        if (bulletsPlayer != 0) {
           bulletsPlayer = bulletsPlayer - 1;
 
-          
+
 
           bullet.position.set(
             battleShip.position.x,
@@ -474,71 +481,68 @@
             0,
             Math.cos(battleShip.rotation.y) * 60
           );
-          
+
           bullet.alive = true;
           bulletAlive = true;
-      
+
 
           setTimeout(
-            function() {
-              bullet.position.set(
-              0,
-              0,
-              0
-              );
+            function () {
+              bullet.position.set( 0, 0, 0);
 
               bulletAlive = false;
               bullet.alive = false;
               scene.remove(bullet);
             }, 1000);
-            
-            bullets.push(bullet);
-            scene.add(bullet);
+
+          bullets.push(bullet);
+          scene.add(bullet);
         }
       }
 
-        if(keyboard.pressed("R")) {
-          bulletsPlayer = 5;
+      if (keyboard.pressed("R")) {
+        bulletsPlayer = 5;
+      }
+
+      if(me != null) {
+        myHp = me.HP;
+      }
+
+      if (vsPlayer != null) {
+        if (bullet != undefined) {
+          updatePlayer({ x: battleShip.position.x, y: battleShip.position.y, z: battleShip.position.z }, { x: battleShip.rotation.x, y: battleShip.rotation.y, z: battleShip.rotation.z }, me.HP, { enable: false, time: 0 }, { x: bullet.position.x, y: bullet.position.y, z: bullet.position.z });
+        } else {
+          updatePlayer({ x: battleShip.position.x, y: battleShip.position.y, z: battleShip.position.z }, { x: battleShip.rotation.x, y: battleShip.rotation.y, z: battleShip.rotation.z }, me.HP, { enable: false, time: 0 }, { x: 0, y: 0, z: 0 });
         }
-      
-        if(vsPlayer != null) {
-          if(bullet != undefined) {
-            updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z }, {x:battleShip.rotation.x,y:battleShip.rotation.y,z:battleShip.rotation.z}, 4,{enable: false, time : 0 }, {x:bullet.position.x,y:bullet.position.y,z:bullet.position.z });
-          } else {
-            updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z }, {x:battleShip.rotation.x,y:battleShip.rotation.y,z:battleShip.rotation.z}, 4,{enable: false, time : 0 }, {x:0,y:0,z:0 });
-          }
-        }
+      }
 
-        if(enemy != null ){
-        
-          enemyCharter.position.x = enemy.position.x;
-          enemyCharter.position.y = enemy.position.y;
-          enemyCharter.position.z = enemy.position.z;
-          enemyCharter.rotation.x = enemy.rotation.x;
-          enemyCharter.rotation.y = enemy.rotation.y;
-          enemyCharter.rotation.z = enemy.rotation.z;
+      if (enemy != null) {
 
-          if(enemy.bulletPosition != undefined) {
-            if(enemy.bulletPosition.x != 0 || enemy.bulletPosition.y != 0 || enemy.bulletPosition.z != 0 && enemyBullet.alive) {
+        enemyCharter.position.x = enemy.position.x;
+        enemyCharter.position.y = enemy.position.y;
+        enemyCharter.position.z = enemy.position.z;
+        enemyCharter.rotation.x = enemy.rotation.x;
+        enemyCharter.rotation.y = enemy.rotation.y;
+        enemyCharter.rotation.z = enemy.rotation.z;
 
-              enemyBullet.position.set(
-                enemy.bulletPosition.x,
-                enemy.bulletPosition.y,
-                enemy.bulletPosition.z
-              );
-              if(enemy.bulletPosition.x != 0 || enemy.bulletPosition.y != 0 || enemy.bulletPosition.z != 0) {
-                scene.add(enemyBullet);
-              } else {
-                scene.remove(enemyBullet);  
-              }
-            } else if(enemyBullet.alive) {
+        if (enemy.bulletPosition != undefined) {
+          if (enemy.bulletPosition.x != 0 || enemy.bulletPosition.y != 0 || enemy.bulletPosition.z != 0 && enemyBullet.alive) {
+
+            enemyBullet.position.set(
+              enemy.bulletPosition.x,
+              enemy.bulletPosition.y,
+              enemy.bulletPosition.z
+            );
+            if (enemy.bulletPosition.x != 0 || enemy.bulletPosition.y != 0 || enemy.bulletPosition.z != 0) {
+              scene.add(enemyBullet);
+            } else {
               scene.remove(enemyBullet);
             }
-
           }
-          
-     
+
         }
+
+      }
 
 
       powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
@@ -550,6 +554,31 @@
 
       controls.update();
       stats.update();
+    }
+
+    function colisionBullet() {
+
+      if (objetosCol != undefined && objetosCol != null) {
+        objetosCol.forEach(objeto => {
+          if(objeto != undefined) {
+            if (Math.sqrt(Math.pow((bullet.position.x - objeto.position.x), 2) + Math.pow((bullet.position.z - objeto.position.z), 2)) < 300) {
+              if(objeto.name == "enemyCharter") {
+                var newHp = enemy.HP - 1;
+                updateHp(newHp);
+                console.log("Hit");
+              }
+              
+              bullet.position.set(0, 0, 0);
+
+              bulletAlive = false;
+              bullet.alive = false;
+
+              scene.remove(bullet);
+            }
+          }
+        });
+      }
+
     }
 
     function render() {

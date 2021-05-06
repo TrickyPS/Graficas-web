@@ -4,6 +4,7 @@ const mapa = window.localStorage.getItem("mapa");
 const dataUser = jQuery.parseJSON(window.localStorage.getItem("user"));
 var userList = [];
 var userKeys = [];
+var me = null ;
 var enemy = null ;
 var myPlayer = null;
 var vsPlayer = null;
@@ -74,26 +75,21 @@ if(dataUser != null){
     });
 
 
-    dbRefPairing.on("child_changed",(snap)=>{
+    dbRefPairing.on("child_changed",(snap)=> {
         
         var player = snap.val();
-        var keyvs = snap.key
+        var keyvs = snap.key;
        
-      
-      
-        
-  
-           if(keyvs == userKeys[vsPlayer]  && player.emparejado == true && player.finalizado == false){
-                //Actualizacion de datos del enemigo
-               enemy = player;
-              
-         }
+        if(keyvs == userKeys[vsPlayer]  && player.emparejado == true && player.finalizado == false){
+            //Actualizacion de datos del enemigo
+            enemy = player;
+        }
             
-       
+        if(keyvs == userKeys[myPlayer]  && player.emparejado == true && player.finalizado == false){
+            //Actualizacion de datos del enemigo
+            me = player;
+        }
       
-      
-      
-        
     });
 
 
@@ -115,9 +111,13 @@ function updatePlayer(position,rotation,HP,escudo, bulletPosition){
        })
 }
 
-
-
-
+function updateHp(HP){
+    
+    const dbRefPlayer =  firebase.database().ref().child(`pairing/${ userKeys[vsPlayer] }`);
+		dbRefPlayer.update({
+           HP
+       })
+}
 
 
 
