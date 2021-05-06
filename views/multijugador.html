@@ -140,7 +140,7 @@
       var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
       camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
       scene.add(camera);
-      camera.position.set(4000, 1300, 0);
+      camera.position.set(4000, 2300, 0);
       camera.lookAt(scene.position);
       // RENDERER
       if (Detector.webgl)
@@ -191,7 +191,7 @@
 
       var directionalLight = new THREE.DirectionalLight(
         new THREE.Color(0xFFFFFF),
-        7
+        2
       );
 
       directionalLight.position.set(0, 2, 1);
@@ -200,22 +200,22 @@
       scene.add(directionalLight);
 
       // FLOOR
-      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/lava.jpg");
+      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/Agutia.jpg");
       texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
       texturat.repeat.set(0.6, 0.6);
       var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
-      var floorGeometry = new THREE.PlaneGeometry(7000, 7000, 10, 10);
+      var floorGeometry = new THREE.CircleGeometry( 5000, 32 );
       var floor = new THREE.Mesh(floorGeometry, floorMaterial);
       floor.position.y = -0.5;
       floor.rotation.x = Math.PI / 2;
       scene.add(floor);
       var cubemat = [
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_ft.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_bk.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_up.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_dn.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_rt.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_lf.png"), side: THREE.BackSide })
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_bk.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_up.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_dn.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_rt.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_lf.png"), side: THREE.BackSide })
       ];
       var cubematerial = new THREE.MeshFaceMaterial(cubemat);
       skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
@@ -251,48 +251,40 @@
         scene.add(battleShip2);
       });
 
-      loader.load('volcan.gltf', (gltf) => {
+      loader.load('Castillo.gltf', (gltf) => {
 
         pared = gltf.scene;
 
-        pared.position.x = 10;
-        pared.position.y = 200;
-        pared.position.z = -1200;
-
+        pared.position.x = -1000;
+        pared.position.y = 0;
+        pared.position.z = 0;
+        pared.scale.x = 8;
+        pared.scale.y = 8;
+        pared.scale.z = 8;
         pared.name = "pared";
 
         scene.add(pared);
 
       });
 
-      loader.load('estatua.gltf', (gltf) => {
-
-        estatua = gltf.scene;
-
-        estatua.position.x = -1500;
-        estatua.position.z = 1200;
-        estatua.position.y = 30;
-
-        estatua.name = "estatua";
-        scene.add(estatua);
-
-      });
-
-      loader.load('rock.gltf', (gltf) => {
+    
+      loader.load('totem.gltf', (gltf) => {
 
         rock = gltf.scene;
 
         rock.position.x = 1700;
         rock.position.z = 0;
         rock.position.y = 30;
+        rock.scale.x = 2;
 
         rock.name = "rock";
         scene.add(rock);
 
         rock2 = rock.clone();
 
-        rock2.position.x = -1700;
+        rock2.position.x = 500;
         rock2.position.z = 0;
+        rock2.scale.x = 2;
         rock2.name = "rock2";
         scene.add(rock2);
 
@@ -340,18 +332,7 @@
 
       });
 
-      loader.load('ovni.gltf', (gltf) => {
-
-        ovni = gltf.scene;
-
-        ovni.position.x = 180;
-        ovni.position.y = 1100;
-        ovni.position.z = -1200;
-
-        ovni.name = "ovni";
-        scene.add(ovni);
-
-      });
+    
 
     }
 
@@ -443,7 +424,7 @@
       powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
-      ovni.rotation.y += THREE.Math.degToRad(70) * delta;
+   
 
       colisionBloques();
 
