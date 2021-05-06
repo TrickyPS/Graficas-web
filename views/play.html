@@ -102,6 +102,12 @@
     var ovni;
     //IMAGES SKYDOME
 
+    //Bullets
+    var bullet;
+    var enemyBullet; 
+    var bullets = [];
+    var bulletAlive = false;
+    var bulletsPlayer = 5;
 
 
 
@@ -230,6 +236,14 @@
       ////////////
       // CUSTOM //
       ////////////
+
+      /*enemyBullet = new THREE.Mesh(
+              new THREE.SphereGeometry(30, 100, 100),
+              new THREE.MeshBasicMaterial({color: 0xffffff})
+      );*/
+
+
+      //#region Modelos
       var loader = new GLTFLoader().setPath('../views/src/assets/gltf/Ships/');
       loader.load('barco1.gltf', (gltf) => {
 
@@ -376,7 +390,19 @@
         scene.add(ovni);
 
       });
+      
+      loader.load('bullet.gltf', (gltf) => {
 
+        enemyBullet = gltf.scene;
+
+        enemyBullet.name = "bullet";
+
+        bullet = enemyBullet.clone();
+
+      });
+      
+      //#endregion
+      
     }
 
 
@@ -390,6 +416,9 @@
     function update() {
 
 
+       // if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
+        //  console.log("joto");
+       // }
 
       var delta = clock.getDelta(); // seconds.
       var moveDistance = 600 * delta; // 200 pixels per second
@@ -421,23 +450,97 @@
         battleShip.rotation.y = 1.5708;
       }
 
-      
-      if(myPlayer != null){
-        
+      for(var i = 0; i < bullets.length; i += 1) {
+        if(bullets[i] === undefined) continue;
+        if(bullets[i].alive == false) {
+          bullets.splice(i, 1);
+          continue
+        }
 
-      updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z },
-      {x:battleShip.rotation.x,y:battleShip.rotation.y,z:battleShip.rotation.z},
-      4,{enable: false, time : 0 } );
+        bullets[i].position.add(bullets[i].velocity);
       }
+
+      if(keyboard.pressed("space") && bulletAlive != true) {
+        if(bulletsPlayer != 0) {
+          bulletsPlayer = bulletsPlayer - 1;
+
+          
+
+          bullet.position.set(
+            battleShip.position.x,
+            battleShip.position.y,
+            battleShip.position.z
+          );
+
+          bullet.velocity = new THREE.Vector3(
+            Math.sin(battleShip.rotation.y) * 60,
+            0,
+            Math.cos(battleShip.rotation.y) * 60
+          );
+          
+          bullet.alive = true;
+          bulletAlive = true;
+      
+
+          setTimeout(
+            function() {
+              bullet.position.set(
+              0,
+              0,
+              0
+              );
+
+              bulletAlive = false;
+              bullet.alive = false;
+              scene.remove(bullet);
+            }, 1000);
+            
+            bullets.push(bullet);
+            scene.add(bullet);
+        }
+      }
+
+        if(keyboard.pressed("R")) {
+          bulletsPlayer = 5;
+        }
+      
+        if(vsPlayer != null) {
+          if(bullet != undefined) {
+            updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z }, {x:battleShip.rotation.x,y:battleShip.rotation.y,z:battleShip.rotation.z}, 4,{enable: false, time : 0 }, {x:bullet.position.x,y:bullet.position.y,z:bullet.position.z });
+          } else {
+            updatePlayer({x:battleShip.position.x,y:battleShip.position.y,z:battleShip.position.z }, {x:battleShip.rotation.x,y:battleShip.rotation.y,z:battleShip.rotation.z}, 4,{enable: false, time : 0 }, {x:0,y:0,z:0 });
+          }
+        }
 
         if(enemy != null ){
         
-      enemyCharter.position.x = enemy.position.x;
-      enemyCharter.position.y = enemy.position.y;
-      enemyCharter.position.z = enemy.position.z;
-      enemyCharter.rotation.x = enemy.rotation.x;
-      enemyCharter.rotation.y = enemy.rotation.y;
-      enemyCharter.rotation.z = enemy.rotation.z;
+          enemyCharter.position.x = enemy.position.x;
+          enemyCharter.position.y = enemy.position.y;
+          enemyCharter.position.z = enemy.position.z;
+          enemyCharter.rotation.x = enemy.rotation.x;
+          enemyCharter.rotation.y = enemy.rotation.y;
+          enemyCharter.rotation.z = enemy.rotation.z;
+
+          if(enemy.bulletPosition != undefined) {
+            if(enemy.bulletPosition.x != 0 || enemy.bulletPosition.y != 0 || enemy.bulletPosition.z != 0 && enemyBullet.alive) {
+
+              enemyBullet.position.set(
+                enemy.bulletPosition.x,
+                enemy.bulletPosition.y,
+                enemy.bulletPosition.z
+              );
+              if(enemy.bulletPosition.x != 0 || enemy.bulletPosition.y != 0 || enemy.bulletPosition.z != 0) {
+                scene.add(enemyBullet);
+              } else {
+                scene.remove(enemyBullet);  
+              }
+            } else if(enemyBullet.alive) {
+              scene.remove(enemyBullet);
+            }
+
+          }
+          
+     
         }
 
 

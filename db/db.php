@@ -10,7 +10,7 @@ public static function  connect() {
 		$databasehost = "localhost";
 		$databasename = "gcwdb";
 		$databaseuser = "root";
-		$databasepass = "root";
+		$databasepass = "";
 
 		$mysqli = new mysqli($databasehost, $databaseuser, $databasepass, $databasename);
 		if ($mysqli->connect_errno) {
