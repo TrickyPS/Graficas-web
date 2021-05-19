@@ -226,7 +226,7 @@
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_rt.png"), side: THREE.BackSide }),
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/hot_lf.png"), side: THREE.BackSide })
       ];
-      var cubematerial = new THREE.MeshFaceMaterial(cubemat);
+     var cubematerial = new THREE.MeshFaceMaterial(cubemat);
       skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
       var cube = new THREE.Mesh(skyboxGeo, cubematerial)
       cube.position.x = 0;
