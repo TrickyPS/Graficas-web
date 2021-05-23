@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="src/css/play.css">
   <link rel="stylesheet" href="src/css/toltip.css">
   <link rel="stylesheet" href="src/css/base.css">
+  <link rel="stylesheet" href="src/css/timer.css">
 
 
 
@@ -91,9 +92,26 @@
 
     <div id="m_end_game" class="modal pause" style="display: none; text-align: center;">
       <h1>FIN DEL JUEGO!</h1>
-      <h4>El jugador ganador es: <p style="color: green;" id="ganador"></p> +10</h4>
+      <h4>Has perdido: <p style="color: red;" id="ganador"></p> -2</h4>
       <hr>
-      <h4>El jugador perdedor es: <p style="color: red;" id="perdedor"></p> -8</h4>
+      <a class="btn static" onclick="SoundClick()" id="btn_salir_fin" href="index.html">
+        <span class="btn__inner static">
+          <span class="btn__slide" static></span>
+          <span class="btn__content static">Abandonar</span>
+        </span>
+      </a>
+    </div>
+
+    <div id="m_end_game_win" class="modal pause" style="display: none; text-align: center;">
+      <h1>HAS GANADO!</h1>
+      <h4 style="color: green;">Has ganado +2</h4>
+      <hr>
+      <a class="btn static" onclick="SoundClick()" id="btn_salir_fin" href="solo-espacio.html">
+        <span class="btn__inner static">
+          <span class="btn__slide" static></span>
+          <span class="btn__content static">Siguiente Nivel</span>
+        </span>
+      </a>
       <hr>
       <a class="btn static" onclick="SoundClick()" id="btn_salir_fin" href="index.html">
         <span class="btn__inner static">
@@ -106,31 +124,14 @@
 
   <div id="ThreeJS" style="position: absolute; z-index: 1; left:0px; top:0px"></div>
   <h1 style="position:absolute; z-index:2; padding-left: 25px; color: white; left: 0;" id="namePlayer1">Player 1</h1>
-  <h1 style="position:absolute; z-index:2; padding-right: 25px; color: white; right: 0;" id="namePlayer2">Player 2</h1>
 
-  <!-- HUD -->
-  <div style="position:absolute; z-index:2; padding-left: 25px; color: white; left: 0; bottom: 0; display:flex;">
-    <img src="src/icons/Heal_Icon.png" style="width: 70px; height: 70px;" alt="">
-    <h1 style="padding: 0 10px;" id="healPlayer1">1</h1>
-    <img src="src/icons/Shild_Icon.png" style="width: 70px; height: 70px;" alt="">
-    <h1 style="padding: 0 10px;" id="shildPlayer1">1</h1>
-    <img src="src/icons/Ball_Icon.png" id="ballImagePlayer1" style="width: 70px; height: 70px;" alt="">
-    <h1 style="padding: 0 10px;" id="ballPlayer1">1</h1>
-  </div>
 
-  <div style="position:absolute; z-index:2; padding-right: 25px; color: white; right: 0; bottom: 0; display:flex;">
-    <img src="src/icons/Heal_Icon.png" style="width: 70px; height: 70px;" alt="">
-    <h1 style="padding: 0 10px;" id="healPlayer2">1</h1>
-    <img src="src/icons/Shild_Icon.png" style="width: 70px; height: 70px;" alt="">
-    <h1 style="padding: 0 10px;" id="shildPlayer2">1</h1>
-    <img src="src/icons/Ball_Icon.png" id="ballImagePlayer2" style="width: 70px; height: 70px;" alt="">
-    <h1 style="padding: 0 10px;" id="ballPlayer2">1</h1>
-  </div>
-  <!-- HUD -->
+  <div style="position: absolute; z-index:2; right: 0; padding: 20px;" id="app"></div>
 
   <script type="module">
     'use strict';
     import { GLTFLoader } from "../views/src/js/GLTFLoader.js";
+
     // MAIN
     var particleSystem
     var battleShip;
@@ -140,6 +141,9 @@
     var rueda2;
     var estatua;
     var rock;
+    var rock2;
+    var rock3;
+    var rock4;
     var powerUpHeal;
     var powerUpShield;
     var powerUpRocket;
@@ -156,18 +160,31 @@
     var part;
     //IMAGES SKYDOME
 
+    var target;
+    var target2;
+    var target3;
+    var target4;
+
+    var isAliveTarget = true;
+    var isAliveTarget2 = true;
+    var isAliveTarget3 = true;
+    var isAliveTarget4 = true;
+
+    var inicio = false;
+    var fin = false;
+
+    var valocidadTarget = 70;
+
+    var canvasX = 800 / 2;
+    var canvasX2 = 800 / 2;
+
     //Bullets
     var bullet;
-    var enemyBullet;
     var bullets = [];
-    var enemyBullets = [];
     var bulletAlive = false;
-    var bulletEnemyAlive = false;
     var bulletsPlayer = 5;
-    var bulletsPlayerEnemy = 5;
 
-    var objetosCol = []
-    var objetosColPlayer2 = []
+    var objetosCol = [];
 
     var tiemposito = 0;
 
@@ -184,16 +201,15 @@
     var shieldPlayer1 = 0;
     var shieldPlayer2 = 0;
 
+    var gameOver = false;
+
 
     $(document).ready( () => {
       usP1 = JSON.parse(window.localStorage.getItem('user'));
-      usP2 = JSON.parse(window.localStorage.getItem('user2'));
 
       $('#namePlayer1').empty();
       $('#namePlayer1').append(usP1.userName);
 
-      $('#namePlayer2').empty();
-      $('#namePlayer2').append(usP2.userName);
     });
 
 
@@ -247,14 +263,6 @@
       stats.domElement.style.zIndex = 100;
       container.appendChild(stats.domElement);
 
-
-      /*     //SPOTLIGHT FOR LIFEHEALTH
-          var spotLight = new THREE.SpotLight(0xff00cc);
-          spotLight.position.x=1200;
-          spotLight.position.y=1000;
-          spotLight.position.=100;
-          scene.add(spotLight);
-     */
       // SPOTLIGHT
       var spotLight = new THREE.SpotLight(0xffffff);
       spotLight.position.set(1200, 1000, 100);
@@ -269,7 +277,7 @@
 
       var directionalLight = new THREE.DirectionalLight(
         new THREE.Color(0xFFFFFF),
-        2
+        7
       );
 
       directionalLight.position.set(0, 2, 1);
@@ -278,7 +286,7 @@
       scene.add(directionalLight);
 
       // FLOOR
-      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/Agutia.jpg");
+      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/lava2.jpg");
       texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
       texturat.repeat.set(0.6, 0.6);
       var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
@@ -288,12 +296,12 @@
       floor.rotation.x = Math.PI / 2;
       scene.add(floor);
       var cubemat = [
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_bk.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_up.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_dn.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_rt.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_lf.png"), side: THREE.BackSide })
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_ft.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_bk.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_up.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_dn.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_rt.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_lf.png"), side: THREE.BackSide })
       ];
       var cubematerial = new THREE.MeshFaceMaterial(cubemat);
       skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
@@ -306,6 +314,7 @@
       // CUSTOM //
       ////////////
       var loader = new GLTFLoader().setPath('../views/src/assets/gltf/Ships/');
+      
       loader.load('barco1.gltf', (gltf) => {
 
         battleShip = gltf.scene;
@@ -320,28 +329,56 @@
 
         battleShip2 = battleShip.clone()
 
-        battleShip2.position.x = 300;
-        battleShip2.position.y = 3;
-        battleShip2.position.z = -2000;
-        battleShip2.rotation.y = -80;
-        battleShip2.name = "battleShip2";
-
-        scene.add(battleShip2);
-
-        objetosCol.push(battleShip2);
-        objetosColPlayer2.push(battleShip);
       });
 
-      loader.load('Castillo.gltf', (gltf) => {
+      loader.load('target.gltf', (gltf) => {
+
+        target = gltf.scene;
+
+        target.position.x = 2000;
+        target.position.y = 200;
+        target.position.z = -2000;
+        target.scale.x = 80;
+        target.scale.y = 80;
+        target.scale.z = 80;
+        target.rotation.y = 250;
+
+        target.name = "target";
+
+        target2 = target.clone();
+        target2.position.x = -3000;
+        target2.name = "target2";
+
+        target3 = target.clone();
+        target3.position.z = 2000;
+        target3.name = "target3";
+
+        target4 = target2.clone();
+        target4.position.z = 2000;
+        target4.name = "target4";
+
+        scene.add(target);
+        scene.add(target2);
+        scene.add(target3);
+        scene.add(target4);
+
+        objetosCol.push(target);
+        objetosCol.push(target2);
+        objetosCol.push(target3);
+        objetosCol.push(target4);
+      });
+
+
+      loader.load('MontañaTierra.gltf', (gltf) => {
 
         pared = gltf.scene;
 
-        pared.position.x = -1000;
-        pared.position.y = 0;
+        pared.position.x = 10;
+        pared.position.y = 210;
         pared.position.z = 0;
-        pared.scale.x = 8;
-        pared.scale.y = 8;
-        pared.scale.z = 8;
+        pared.scale.x = 40;
+        pared.scale.y = 40;
+        pared.scale.z = 40;
         pared.name = "pared";
 
         scene.add(pared);
@@ -349,83 +386,46 @@
       });
 
 
-      loader.load('totem.gltf', (gltf) => {
+      loader.load('rock.gltf', (gltf) => {
 
         rock = gltf.scene;
 
         rock.position.x = 1700;
         rock.position.z = 0;
         rock.position.y = 30;
-        rock.scale.x = 2;
 
         rock.name = "rock";
         scene.add(rock);
 
         rock2 = rock.clone();
 
-        rock2.position.x = 500;
+        rock2.position.x = -1700;
         rock2.position.z = 0;
-        rock2.scale.x = 2;
         rock2.name = "rock2";
         scene.add(rock2);
 
+        rock3 = rock.clone();
+
+        rock3.position.x = 0;
+        rock3.position.z = -2000;
+        rock3.name = "rock3";
+        scene.add(rock3);
+
+        rock4 = rock.clone();
+
+        rock4.position.x = 0;
+        rock4.position.z = 2000;
+        rock4.name = "rock4";
+        scene.add(rock4);
 
 
-
-      });
-
-      loader.load('powerUpHeal.gltf', (gltf) => {
-
-        powerUpHeal = gltf.scene;
-
-        powerUpHeal.position.x = 1200;
-        powerUpHeal.position.z = 1000;
-        powerUpHeal.position.y = 100;
-
-        powerUpHeal.name = "powerUpHeal";
-        scene.add(powerUpHeal);
-
-        objetosCol.push(powerUpHeal);
-        objetosColPlayer2.push(powerUpHeal);
-      });
-
-      loader.load('powerUpShield.gltf', (gltf) => {
-
-        powerUpShield = gltf.scene;
-
-        powerUpShield.position.x = -1200;
-        powerUpShield.position.z = -1000;
-        powerUpShield.position.y = 100;
-
-        powerUpShield.name = "powerUpShield";
-        scene.add(powerUpShield);
-
-        objetosCol.push(powerUpShield);
-        objetosColPlayer2.push(powerUpShield);
-      });
-
-      loader.load('powerUpRocket.gltf', (gltf) => {
-
-        powerUpRocket = gltf.scene;
-
-        powerUpRocket.position.x = 600;
-        powerUpRocket.position.z = 100;
-        powerUpRocket.position.y = 100;
-
-        powerUpRocket.name = "powerUpRocket";
-        scene.add(powerUpRocket);
-
-        objetosCol.push(powerUpRocket);
-        objetosColPlayer2.push(powerUpRocket);
       });
 
       loader.load('bullet.gltf', (gltf) => {
 
-        enemyBullet = gltf.scene;
+        bullet = gltf.scene;
 
-        enemyBullet.name = "bullet";
-
-        bullet = enemyBullet.clone();
+        bullet.name = "bullet";
 
       });
 
@@ -508,28 +508,49 @@
       var moveDistance = 600 * delta; // 200 pixels per second
       var rotateAngle = Math.PI / 2 * delta;
       var rotation_matrix = new THREE.Matrix4().identity();
-      var powerUpHeal = scene.getObjectByName("powerUpHeal");
-      var powerUpShield = scene.getObjectByName("powerUpShield");
-      var powerUpRocket = scene.getObjectByName("powerUpRocket");
 
       // global coordinates
 
       //#region JUGADOR 1
-      if (keyboard.pressed("left")) {
+      if (keyboard.pressed("A")) {
         battleShip.position.z += moveDistance;
         battleShip.rotation.y = 1.5708;
       }
-      else if (keyboard.pressed("right")) {
+      else if (keyboard.pressed("D")) {
         battleShip.position.z -= moveDistance;
         battleShip.rotation.y = 4.71239;
       }
-      else if (keyboard.pressed("up")) {
+      else if (keyboard.pressed("W")) {
         battleShip.position.x -= moveDistance;
         battleShip.rotation.y = 0;
       }
-      else if (keyboard.pressed("down")) {
+      else if (keyboard.pressed("S")) {
         battleShip.position.x += moveDistance;
         battleShip.rotation.y = 3.14159;
+      }
+
+      if(canvasX + 10 < 480 && inicio == false || canvasX <= 150) {
+        inicio = false;
+        target.position.x += valocidadTarget;
+        target3.position.x += valocidadTarget;
+        canvasX += 1; 
+      } else {
+        inicio = true;
+        target.position.x -= valocidadTarget;
+        target3.position.x -= valocidadTarget;
+        canvasX -= 1;
+      }
+
+      if(canvasX + 10 < 480 && inicio == false || canvasX <= 150) {
+        inicio = false;
+        target2.position.x -= valocidadTarget;
+        target4.position.x -= valocidadTarget;
+        canvasX += 1; 
+      } else {
+        inicio = true;
+        target2.position.x += valocidadTarget;
+        target4.position.x += valocidadTarget;
+        canvasX -= 1;
       }
 
       colisionPlayer1();
@@ -547,7 +568,7 @@
 
       colisionBulletPlayer1();
 
-      if (keyboard.pressed("N") && bulletAlive != true) {
+      if (keyboard.pressed("space") && bulletAlive != true) {
         if (bulletsPlayer != 0) {
           bulletsPlayer = bulletsPlayer - 1;
 
@@ -588,104 +609,18 @@
         }
       }
 
-      if (keyboard.pressed("B")) {
+      if (keyboard.pressed("R")) {
         bulletsPlayer = 5;
       }
       //#endregion
 
       //#endregion
 
-      //#region JUGADOR 2
-      if (keyboard.pressed("A")) {
-        battleShip2.position.z += moveDistance;
-        battleShip2.rotation.y = 1.5708;
-      }
-      else if (keyboard.pressed("D")) {
-        battleShip2.position.z -= moveDistance;
-        battleShip2.rotation.y = 4.71239;
-      }
-      else if (keyboard.pressed("W")) {
-        battleShip2.position.x -= moveDistance;
-        battleShip2.rotation.y = 3.14159;
-      }
-      else if (keyboard.pressed("S")) {
-        battleShip2.position.x += moveDistance;
-        battleShip2.rotation.y = 0;
-      }
-
-      colisionPlayer2();
-
-      //#region BULLET PLAYER 2
-      for (var i = 0; i < enemyBullets.length; i += 1) {
-        if (enemyBullets[i] === undefined) continue;
-        if (enemyBullets[i].alive == false) {
-          enemyBullets.splice(i, 1);
-          continue
-        }
-
-        enemyBullets[i].position.add(enemyBullets[i].velocity);
-      }
-
-      colisionBulletPlayer2();
-
-      if (keyboard.pressed("E") && bulletEnemyAlive != true) {
-        if (bulletsPlayerEnemy != 0) {
-          bulletsPlayerEnemy = bulletsPlayerEnemy - 1;
-
-
-
-          enemyBullet.position.set(
-            battleShip2.position.x,
-            battleShip2.position.y,
-            battleShip2.position.z
-          );
-
-          enemyBullet.velocity = new THREE.Vector3(
-            Math.sin(battleShip2.rotation.y) * 60,
-            0,
-            Math.cos(battleShip2.rotation.y) * 60
-          );
-
-          enemyBullet.alive = true;
-          bulletEnemyAlive = true;
-
-
-          setTimeout(
-            function () {
-              enemyBullet.position.set(0, 0, 0);
-
-              if (damagePlayer2 > 1) {
-                $("#ballImagePlayer2").attr("src", "src/icons/Ball_Icon.png");
-                damagePlayer2 = 1;
-              }
-
-              bulletEnemyAlive = false;
-              enemyBullet.alive = false;
-              scene.remove(enemyBullet);
-            }, 1000);
-
-          enemyBullets.push(enemyBullet);
-          scene.add(enemyBullet);
-        }
-      }
-
-      if (keyboard.pressed("R")) {
-        bulletsPlayerEnemy = 5;
-      }
-      //#endregion
-
-      //#endregion
-
-
-      powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
-      powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
-      powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
-
-
       colisionBloques();
 
-      updateHud();
+      checkTargetsAlive()
 
+      updateHud()
 
       controls.update();
       stats.update();
@@ -693,21 +628,8 @@
 
     // HUD
     function updateHud() {
-      $('#healPlayer1').empty();
-      $('#shildPlayer1').empty();
       $('#ballPlayer1').empty();
-
-      $('#healPlayer2').empty();
-      $('#shildPlayer2').empty();
-      $('#ballPlayer2').empty();
-
-      $('#healPlayer1').append(vidaPlayer1);
-      $('#shildPlayer1').append(shieldPlayer1);
       $('#ballPlayer1').append(bulletsPlayer);
-
-      $('#healPlayer2').append(vidaPlayer2);
-      $('#shildPlayer2').append(shieldPlayer2);
-      $('#ballPlayer2').append(bulletsPlayerEnemy);
     }
     // HUD
 
@@ -737,6 +659,23 @@
 
               }
 
+              if(objeto.name == "target") {
+                scene.remove(objeto);  
+                isAliveTarget = false;
+              } 
+              else if(objeto.name == "target2") {
+                scene.remove(objeto);  
+                isAliveTarget2 = false;
+              }
+              else if(objeto.name == "target3") {
+                scene.remove(objeto);  
+                isAliveTarget3 = false;
+              }
+              else if(objeto.name == "target4") {
+                scene.remove(objeto);  
+                isAliveTarget4 = false;
+              }
+
               if (damagePlayer1 > 1) {
                 $("#ballImagePlayer1").attr("src", "src/icons/Ball_Icon.png");
                 damagePlayer1 = 1;
@@ -761,121 +700,21 @@
           if (objeto != undefined) {
             if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 300) {
 
-              if (objeto.name == "powerUpHeal" && objeto.visible == true) {
-                vidaPlayer1++;
-                console.log(vidaPlayer1);
-                objeto.visible = false;
-              }
-
-              if (objeto.name == "powerUpRocket" && objeto.visible == true) {
-                damagePlayer1 = 2;
-                $("#ballImagePlayer1").attr("src", "src/icons/Ball_Red_Icon.png");
-                console.log(damagePlayer1);
-                objeto.visible = false;
-              }
-
-              if (objeto.name == "powerUpShield" && objeto.visible == true) {
-                shieldPlayer1 = shieldPlayer1 + 2;
-                console.log(shieldPlayer1);
-                objeto.visible = false;
-              }
             }
           }
         });
       }
     }
 
-    function colisionBulletPlayer2() {
-
-      if (objetosColPlayer2 != undefined && objetosColPlayer2 != null) {
-        objetosColPlayer2.forEach(objeto => {
-          if (objeto != undefined) {
-            if (Math.sqrt(Math.pow((enemyBullet.position.x - objeto.position.x), 2) + Math.pow((enemyBullet.position.z - objeto.position.z), 2)) < 300) {
-              if (objeto.name == "battleShip") {
-
-                if (shieldPlayer1 > 0) {
-                  if (shieldPlayer1 < damagePlayer2) {
-                    shieldPlayer1 = 0;
-                  } else {
-                    shieldPlayer1 = shieldPlayer1 - damagePlayer2;
-                  }
-                  console.log(shieldPlayer1);
-                } else {
-                  vidaPlayer1 = vidaPlayer1 - damagePlayer2;
-                  if (vidaPlayer1 <= 0) {
-                    showGameOver(usP2, usP1);
-                  }
-                  console.log(vidaPlayer1);
-                }
-
-              }
-
-              if (damagePlayer2 > 1) {
-                $("#ballImagePlayer2").attr("src", "src/icons/Ball_Icon.png");
-                damagePlayer2 = 1;
-              }
-
-              enemyBullet.position.set(0, 0, 0);
-
-              bulletEnemyAlive = false;
-              enemyBullet.alive = false;
-
-              scene.remove(enemyBullet);
-            }
-          }
-        });
+    function checkTargetsAlive() {
+      if(isAliveTarget == false && isAliveTarget2 == false && isAliveTarget3 == false && isAliveTarget4 == false && gameOver == false) {
+        $('#m_end_game_win').modal('show');
+        onTimesUp();
+        gameOver = true;
+        var updateUser1 = new User(usP1.id, null, null, null, null).updateUserLocalStorage("user");
+        var userWin = new User(usP1.id, null, null, null, parseInt(usP1.totalPoints) + 2).updateTotalPoints();
+        var updateUser1 = new User(usP1.id, null, null, null, null).updateUserLocalStorage("user");
       }
-    }
-
-    function colisionPlayer2() {
-
-      if (objetosColPlayer2 != undefined && objetosColPlayer2 != null) {
-        objetosColPlayer2.forEach(objeto => {
-          if (objeto != undefined) {
-            if (Math.sqrt(Math.pow((battleShip2.position.x - objeto.position.x), 2) + Math.pow((battleShip2.position.z - objeto.position.z), 2)) < 300) {
-
-              if (objeto.name == "powerUpHeal" && objeto.visible == true) {
-                vidaPlayer2++;
-                console.log(vidaPlayer2);
-                objeto.visible = false;
-              }
-
-              if (objeto.name == "powerUpRocket" && objeto.visible == true) {
-                damagePlayer2 = 2;
-                $("#ballImagePlayer2").attr("src", "src/icons/Ball_Red_Icon.png");
-                console.log(damagePlayer2);
-                objeto.visible = false;
-              }
-
-              if (objeto.name == "powerUpShield" && objeto.visible == true) {
-                shieldPlayer2 = shieldPlayer2 + 2;
-                console.log(shieldPlayer2);
-                objeto.visible = false;
-              }
-
-            }
-          }
-        });
-      }
-
-    }
-
-    function showGameOver(winner, loser) {
-
-      $('#ganador').empty("");
-      $('#perdedor').empty("");
-
-      $('#ganador').append(winner.userName);
-      $('#perdedor').append(loser.userName);
-      $('#m_end_game').modal('show');
-
-      var userWin = new User(winner.id, null, null, null, parseInt(winner.totalPoints) + 10).updateTotalPoints();
-      var userLose = new User(loser.id, null, null, null, parseInt(loser.totalPoints) - 8).updateTotalPoints();
-      
-      
-
-      var updateUser1 = new User(usP1.id, null, null, null, null).updateUserLocalStorage("user");
-      var updateUser2 = new User(usP2.id, null, null, null, null).updateUserLocalStorage("user2");
     }
 
     function render() {
@@ -885,6 +724,7 @@
 
   </script>
 
+  <script src="src/js/timer.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
   <script id="Firebase">

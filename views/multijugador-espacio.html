@@ -278,7 +278,7 @@
       scene.add(directionalLight);
 
       // FLOOR
-      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/Agutia.jpg");
+      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/waterpurple.jpg");
       texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
       texturat.repeat.set(0.6, 0.6);
       var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
@@ -288,12 +288,12 @@
       floor.rotation.x = Math.PI / 2;
       scene.add(floor);
       var cubemat = [
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_bk.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_up.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_dn.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_rt.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_lf.png"), side: THREE.BackSide })
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_ft.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_bk.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_up.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_dn.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_rt.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_lf.png"), side: THREE.BackSide })
       ];
       var cubematerial = new THREE.MeshFaceMaterial(cubemat);
       skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
@@ -332,16 +332,14 @@
         objetosColPlayer2.push(battleShip);
       });
 
-      loader.load('Castillo.gltf', (gltf) => {
+      loader.load('ovni.gltf', (gltf) => {
 
         pared = gltf.scene;
 
-        pared.position.x = -1000;
-        pared.position.y = 0;
+        pared.position.x = 10;
+        pared.position.y = 60;
         pared.position.z = 0;
-        pared.scale.x = 8;
-        pared.scale.y = 8;
-        pared.scale.z = 8;
+       
         pared.name = "pared";
 
         scene.add(pared);
@@ -349,37 +347,15 @@
       });
 
 
-      loader.load('totem.gltf', (gltf) => {
-
-        rock = gltf.scene;
-
-        rock.position.x = 1700;
-        rock.position.z = 0;
-        rock.position.y = 30;
-        rock.scale.x = 2;
-
-        rock.name = "rock";
-        scene.add(rock);
-
-        rock2 = rock.clone();
-
-        rock2.position.x = 500;
-        rock2.position.z = 0;
-        rock2.scale.x = 2;
-        rock2.name = "rock2";
-        scene.add(rock2);
 
 
-
-
-      });
 
       loader.load('powerUpHeal.gltf', (gltf) => {
 
         powerUpHeal = gltf.scene;
 
-        powerUpHeal.position.x = 1200;
-        powerUpHeal.position.z = 1000;
+        powerUpHeal.position.x = 0;
+        powerUpHeal.position.z = 1200;
         powerUpHeal.position.y = 100;
 
         powerUpHeal.name = "powerUpHeal";
@@ -393,8 +369,8 @@
 
         powerUpShield = gltf.scene;
 
-        powerUpShield.position.x = -1200;
-        powerUpShield.position.z = -1000;
+        powerUpShield.position.x = 900;
+        powerUpShield.position.z = 0;
         powerUpShield.position.y = 100;
 
         powerUpShield.name = "powerUpShield";
@@ -408,8 +384,8 @@
 
         powerUpRocket = gltf.scene;
 
-        powerUpRocket.position.x = 600;
-        powerUpRocket.position.z = 100;
+        powerUpRocket.position.x = 0;
+        powerUpRocket.position.z = -1200;
         powerUpRocket.position.y = 100;
 
         powerUpRocket.name = "powerUpRocket";
@@ -417,6 +393,46 @@
 
         objetosCol.push(powerUpRocket);
         objetosColPlayer2.push(powerUpRocket);
+      });
+
+
+
+
+      loader.load('mon.gltf', (gltf) => {
+
+        rock = gltf.scene;
+
+        rock.position.x = 1700;
+        rock.position.z = 0;
+        rock.position.y = 30;
+        rock.scale.x =1;
+        rock.scale.y =1;
+        rock.scale.z =1;
+        rock.name = "rock";
+        scene.add(rock);
+
+        rock2 = rock.clone();
+
+        rock2.position.x = -1700;
+        rock2.position.z = 0;
+        rock2.name = "rock2";
+        scene.add(rock2);
+
+        rock3 = rock.clone();
+
+        rock3.position.x = 0;
+        rock3.position.z = -2000;
+        rock3.name = "rock3";
+        scene.add(rock3);
+
+        rock4 = rock.clone();
+
+        rock4.position.x = 0;
+        rock4.position.z = 2000;
+        rock4.name = "rock4";
+        scene.add(rock4);
+
+
       });
 
       loader.load('bullet.gltf', (gltf) => {

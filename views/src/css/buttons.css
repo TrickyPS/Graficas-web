@@ -14,7 +14,6 @@
     text-decoration: none;
     --button-text-color: var(--background-color);
     --button-text-color-hover: #1abc9c;
-    --border-color: #1abc9c;
     --button-background-color: #ece8e1;
     --highlight-color: #1b1e24;
     --button-inner-border-color: transparent;
