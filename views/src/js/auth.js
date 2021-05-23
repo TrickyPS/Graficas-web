@@ -1,5 +1,6 @@
 const registrarse = document.querySelector("#register-form");
 const iniciarSesion = document.querySelector("#login-form");
+const iniciarSesionPlayer2 = document.querySelector("#login-form-player2");
 const cerrarSesion = document.querySelector("#btnLogout");
 
 registrarse.addEventListener('submit', (e) => {
@@ -10,7 +11,7 @@ registrarse.addEventListener('submit', (e) => {
     
     auth.createUserWithEmailAndPassword(email, password).then((userCredential) => {
         registrarse.reset();
-        Usuario = new User(null, user, email, password).addUser();
+        Usuario = new User(null, user, email, password, null).addUser();
     });
 });
 
@@ -23,8 +24,21 @@ iniciarSesion.addEventListener('submit', (e) => {
     auth.signInWithEmailAndPassword(user, password).then((userCredential) => {
         iniciarSesion.reset();
        
-        var UserModel = new User(null, null, user, password).getUserByEmail();
+        var UserModel = new User(null, null, user, password, null).getUserByEmail();
     });
+});
+
+iniciarSesionPlayer2.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const user = $('#userPlayer2').val();
+  const password = $('#clavePlayer2').val();
+
+    iniciarSesionPlayer2.reset();
+     
+    var UserModel = new User(null, null, user, password, null).getUserByEmail();
+
+    $('#m_signin_player2').modal('hidden');
 });
 
 cerrarSesion.addEventListener("click", (e) => {
@@ -36,7 +50,7 @@ cerrarSesion.addEventListener("click", (e) => {
 
 auth.onAuthStateChanged((user) => {
     if (user) {
-      var UserModel = new User(null, null, user.email, null).getUserByEmail();
+      var UserModel = new User(null, null, user.email, null, null).getUserByEmail();
       console.log("signin");
       $('#btnLogin').hide();
       $('#btnLogup').hide();

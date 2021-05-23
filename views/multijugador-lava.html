@@ -156,7 +156,6 @@
     var part;
     //IMAGES SKYDOME
 
-
     //Bullets
     var bullet;
     var enemyBullet;
@@ -196,62 +195,6 @@
       $('#namePlayer2').empty();
       $('#namePlayer2').append(usP2.userName);
     });
-
-/////////////////Shaders
-    const _VS = `	 
-    varying vec2 vUv;
-
-    void main() {
-        vUv = uv;
-
-        gl_Position =   projectionMatrix * 
-                        modelViewMatrix * 
-                        vec4(position,1.0);
-    }
-            `;
-    const _PS = ` 
-    uniform sampler2D baseTexture;
-uniform float baseSpeed;
-uniform sampler2D noiseTexture;
-uniform float noiseScale;
-uniform float alpha;
-uniform float time;
-varying vec2 vUv;
-
-void main() 
-{
-    vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;
-    vec4 noise = texture2D( noiseTexture, uvTimeShift );
-    vec2 uvNoisyTimeShift = vUv + noiseScale * vec2( noise.r , noise.g );
-    vec4 baseColor = texture2D( baseTexture, uvNoisyTimeShift );
-    baseColor.a = alpha;
-    gl_FragColor = baseColor;
-}
-`;
-
-
-var clock2 = new THREE.Clock();
-
-   
-
-var noiseTexture = new THREE.ImageUtils.loadTexture( '../views/src/js/imagenes/cloud.png');
-noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
-
-var lavaTexture = new THREE.ImageUtils.loadTexture( '../views/src/js/imagenes/water512.jpg' );
-lavaTexture.wrapS = lavaTexture.wrapT = THREE.RepeatWrapping; 
-
-// create global uniforms object so its accessible in update method
-var customUniforms = {
-    baseTexture:  { type: "t", value: lavaTexture },
-    baseSpeed:    { type: "f", value: 0.02 },
-    noiseTexture: { type: "t", value: noiseTexture },
-    noiseScale:   { type: "f", value: 1 },
-    alpha:        { type: "f", value: 1.0 },
-    time:         { type: "f", value: 1.0 }
-};
-
-    //////////////////Shaders
-
 
 
     // standard global variables
@@ -335,33 +278,22 @@ var customUniforms = {
       scene.add(directionalLight);
 
       // FLOOR
-
-     // texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/Agutia.jpg");
-     // texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
-      //texturat.repeat.set(0.6, 0.6);
-     // var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
+      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/lava2.jpg");
+      texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
+      texturat.repeat.set(0.6, 0.6);
+      var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
       var floorGeometry = new THREE.CircleGeometry(5000, 32);
-
-
-
-      var floor = new THREE.Mesh(floorGeometry, new THREE.ShaderMaterial({
-
-        uniforms: customUniforms,
-        vertexShader: _VS ,
-        fragmentShader: _PS,
-      
-      }));
-
+      var floor = new THREE.Mesh(floorGeometry, floorMaterial);
       floor.position.y = -0.5;
-      floor.rotation.x = -Math.PI /2;
+      floor.rotation.x = Math.PI / 2;
       scene.add(floor);
       var cubemat = [
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_bk.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_up.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_dn.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_rt.png"), side: THREE.BackSide }),
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_lf.png"), side: THREE.BackSide })
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_ft.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_bk.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_up.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_dn.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_rt.png"), side: THREE.BackSide }),
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/sp3_lf.png"), side: THREE.BackSide })
       ];
       var cubematerial = new THREE.MeshFaceMaterial(cubemat);
       skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
@@ -400,16 +332,16 @@ var customUniforms = {
         objetosColPlayer2.push(battleShip);
       });
 
-      loader.load('Castillo.gltf', (gltf) => {
+      loader.load('MontañaTierra.gltf', (gltf) => {
 
         pared = gltf.scene;
 
-        pared.position.x = -1000;
-        pared.position.y = 0;
+        pared.position.x = 10;
+        pared.position.y = 210;
         pared.position.z = 0;
-        pared.scale.x = 8;
-        pared.scale.y = 8;
-        pared.scale.z = 8;
+        pared.scale.x = 40;
+        pared.scale.y = 40;
+        pared.scale.z = 40;
         pared.name = "pared";
 
         scene.add(pared);
@@ -417,37 +349,15 @@ var customUniforms = {
       });
 
 
-      loader.load('totem.gltf', (gltf) => {
-
-        rock = gltf.scene;
-
-        rock.position.x = 1700;
-        rock.position.z = 0;
-        rock.position.y = 30;
-        rock.scale.x = 2;
-
-        rock.name = "rock";
-        scene.add(rock);
-
-        rock2 = rock.clone();
-
-        rock2.position.x = 500;
-        rock2.position.z = 0;
-        rock2.scale.x = 2;
-        rock2.name = "rock2";
-        scene.add(rock2);
 
 
-
-
-      });
 
       loader.load('powerUpHeal.gltf', (gltf) => {
 
         powerUpHeal = gltf.scene;
 
-        powerUpHeal.position.x = 1200;
-        powerUpHeal.position.z = 1000;
+        powerUpHeal.position.x = 0;
+        powerUpHeal.position.z = 1200;
         powerUpHeal.position.y = 100;
 
         powerUpHeal.name = "powerUpHeal";
@@ -461,8 +371,8 @@ var customUniforms = {
 
         powerUpShield = gltf.scene;
 
-        powerUpShield.position.x = -1200;
-        powerUpShield.position.z = -1000;
+        powerUpShield.position.x = 900;
+        powerUpShield.position.z = 0;
         powerUpShield.position.y = 100;
 
         powerUpShield.name = "powerUpShield";
@@ -476,8 +386,8 @@ var customUniforms = {
 
         powerUpRocket = gltf.scene;
 
-        powerUpRocket.position.x = 600;
-        powerUpRocket.position.z = 100;
+        powerUpRocket.position.x = 0;
+        powerUpRocket.position.z = -1200;
         powerUpRocket.position.y = 100;
 
         powerUpRocket.name = "powerUpRocket";
@@ -485,6 +395,44 @@ var customUniforms = {
 
         objetosCol.push(powerUpRocket);
         objetosColPlayer2.push(powerUpRocket);
+      });
+
+
+
+
+      loader.load('rock.gltf', (gltf) => {
+
+        rock = gltf.scene;
+
+        rock.position.x = 1700;
+        rock.position.z = 0;
+        rock.position.y = 30;
+
+        rock.name = "rock";
+        scene.add(rock);
+
+        rock2 = rock.clone();
+
+        rock2.position.x = -1700;
+        rock2.position.z = 0;
+        rock2.name = "rock2";
+        scene.add(rock2);
+
+        rock3 = rock.clone();
+
+        rock3.position.x = 0;
+        rock3.position.z = -2000;
+        rock3.name = "rock3";
+        scene.add(rock3);
+
+        rock4 = rock.clone();
+
+        rock4.position.x = 0;
+        rock4.position.z = 2000;
+        rock4.name = "rock4";
+        scene.add(rock4);
+
+
       });
 
       loader.load('bullet.gltf', (gltf) => {
@@ -538,8 +486,6 @@ var customUniforms = {
     }
 
     function update() {
-      var delta2 = clock2.getDelta();
-      customUniforms.time.value += delta2;
       ////////////////////////////////Para lass particulas
       particleSystem.rotation.y += 0.01;
 
@@ -751,6 +697,7 @@ var customUniforms = {
       powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
 
+
       colisionBloques();
 
       updateHud();
@@ -948,8 +895,7 @@ var customUniforms = {
     }
 
     function render() {
-      //texturat.offset.x += .0003;
-      
+      texturat.offset.x += .0003;
       renderer.render(scene, camera);
     }
 

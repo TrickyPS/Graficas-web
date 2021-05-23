@@ -25,6 +25,7 @@
   <script src="src/js/index.js" defer></script>
   <script src="src/js/background.js" defer></script>
   <script src="src/js/controllers/user.js" defer></script>
+  <script src="src/js/controllers/scoreUser.js" defer></script>
 
   <script async defer crossorigin="anonymous"
     src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v10.0&appId=193336315977409&autoLogAppEvents=1"
@@ -158,45 +159,19 @@
           <th class="text-left">Puntos</th>
         </tr>
       </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td class="text-left">Username</td>
-          <td class="text-left">0000000</td>
-        </tr>
-        <tr>
-          <td class="text-left">Username</td>
-          <td class="text-left">0000000</td>
-        </tr>
-        <tr>
-          <td class="text-left">Username</td>
-          <td class="text-left">0000000</td>
-        </tr>
-
+      <tbody class="table-hover" id="body-scores">
+        
       </tbody>
     </table>
   </div>
   <div id="m_controles" class="modal ">
     <p>Controles.</p>
   </div>
-
-
-
   <div id="m_compartir" class="modal ">
     <p>Compartir.</p>
-   <div class="contCompartir">
-    <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button"
-    data-size="small"><a target="_blank"
-      href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse"
-      class="fb-xfbml-parse-ignore">Compartir</a></div>
-
-  <a  class="btn_twitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fparzibyte.me%2Fblog&hashtags=TheCuriseWar,Juega,GraficasWeb"
-    target="_blank"><i class="fab fa-twitter"></i>Compartir</a>
-   </div>
+    <i class="fab fa-facebook-square" style="font-size: 4rem; color: #3B5998;"></i><br>
+    <textarea name="" id="" cols="30" rows="10"></textarea>
   </div>
-
-
-
-
   <div id="m_configuracion" class="modal ">
     <p>Configuración</p>
 
@@ -234,6 +209,7 @@
       </div>
     </form>
   </div>
+
   <div id="m_signup" class="modal">
     <p>Registrar</p>
     <form action="" id="register-form">
@@ -248,6 +224,24 @@
           <span class="btn__inner static">
             <span class="btn__slide" static></span>
             <span class="btn__content static">Aceptar</span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div id="m_signin_player2" class="modal ">
+    <p>Iniciar sesión</p>
+    <form action="" id="login-form-player2">
+      <label for="user">Usuario o correo:</label>
+      <input type="text" id="userPlayer2"><br>
+      <label for="clave">Contraseña:</label>
+      <input type="password" id="clavePlayer2"><br>
+      <div style="text-align-last: center; width: 100%;">
+        <button class="btn static" onclick="SoundClick()">
+          <span class="btn__inner static">
+            <span class="btn__slide" static></span>
+            <span class="btn__content static">Entrar</span>
           </span>
         </button>
       </div>
@@ -273,6 +267,46 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+  </script>
+
+  <script>
+
+    $(document).ready(() => {
+      
+      $('#btn_multi').click(() => {
+        $('#m_signin_player2').modal('show');
+      });
+
+      getScores();
+
+    });
+
+    function getScores() {
+      var dataToSend = {
+        action: "getScores"
+      };
+
+      $.ajax({
+        url: "../controllers/user.php",
+        async: true,
+        type: 'POST',
+        data: dataToSend,
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+
+          for(element of data) {
+            var score = new Score(element.id, element.userName, element.totalPoints);
+            $('#body-scores').append(score.getHtml());
+          }
+        },
+        error: function (x, y, z) {
+
+          alert("Error en webservice: " + x + y + z);
+        }
+      });
+    }
+
   </script>
 
   <script src="src/js/auth.js"></script>
