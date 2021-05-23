@@ -88,7 +88,7 @@
       </div>
     </div>
   </div>
-  
+
   <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
   <div id="ThreeJS2" style="position: absolute; left:0px; top:0px"></div>
 
@@ -96,7 +96,7 @@
     'use strict';
     import { GLTFLoader } from "../views/src/js/GLTFLoader.js";
     // MAIN
-    var particleSystem 
+    var particleSystem
     var battleShip;
     var battleShip2;
     var pared;
@@ -120,8 +120,60 @@
     var part;
     //IMAGES SKYDOME
 
+/////////////////Shaders
+    const _VS = `	 
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+
+        gl_Position =   projectionMatrix * 
+                        modelViewMatrix * 
+                        vec4(position,1.0);
+    }
+            `;
+    const _PS = ` 
+    uniform sampler2D baseTexture;
+uniform float baseSpeed;
+uniform sampler2D noiseTexture;
+uniform float noiseScale;
+uniform float alpha;
+uniform float time;
+varying vec2 vUv;
+
+void main() 
+{
+    vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;
+    vec4 noise = texture2D( noiseTexture, uvTimeShift );
+    vec2 uvNoisyTimeShift = vUv + noiseScale * vec2( noise.r , noise.g );
+    vec4 baseColor = texture2D( baseTexture, uvNoisyTimeShift );
+    baseColor.a = alpha;
+    gl_FragColor = baseColor;
+}
+`;
 
 
+var clock2 = new THREE.Clock();
+
+   
+
+var noiseTexture = new THREE.ImageUtils.loadTexture( '../views/src/js/imagenes/cloud.png');
+noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
+
+var lavaTexture = new THREE.ImageUtils.loadTexture( '../views/src/js/imagenes/water512.jpg' );
+lavaTexture.wrapS = lavaTexture.wrapT = THREE.RepeatWrapping; 
+
+// create global uniforms object so its accessible in update method
+var customUniforms = {
+    baseTexture:  { type: "t", value: lavaTexture },
+    baseSpeed:    { type: "f", value: 0.02 },
+    noiseTexture: { type: "t", value: noiseTexture },
+    noiseScale:   { type: "f", value: 1 },
+    alpha:        { type: "f", value: 1.0 },
+    time:         { type: "f", value: 1.0 }
+};
+
+    //////////////////Shaders
 
 
     // standard global variables
@@ -205,14 +257,26 @@
       scene.add(directionalLight);
 
       // FLOOR
-      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/Agutia.jpg");
-      texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
-      texturat.repeat.set(0.6, 0.6);
-      var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
-      var floorGeometry = new THREE.CircleGeometry( 5000, 32 );
-      var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+     // texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/Agutia.jpg");
+     // texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
+      //texturat.repeat.set(0.6, 0.6);
+     // var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
+      var floorGeometry = new THREE.CircleGeometry(5000, 32);
+
+
+
+      var floor = new THREE.Mesh(floorGeometry, new THREE.ShaderMaterial({
+
+        uniforms: customUniforms,
+        vertexShader: _VS ,
+        fragmentShader: _PS,
+      
+      }));
+
+
+
       floor.position.y = -0.5;
-      floor.rotation.x = Math.PI / 2;
+      floor.rotation.x = -Math.PI /2;
       scene.add(floor);
       var cubemat = [
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
@@ -252,7 +316,7 @@
         battleShip2.position.z = -2000;
         battleShip2.rotation.y = -80;
         battleShip2.name = "battleShip2";
-        
+
         scene.add(battleShip2);
       });
 
@@ -272,7 +336,7 @@
 
       });
 
-    
+
       loader.load('totem.gltf', (gltf) => {
 
         rock = gltf.scene;
@@ -339,35 +403,35 @@
 
       //////////////////////////////Particulas
       particleCount = 15000,
-    particles = [],
-    pMaterial = new THREE.PointsMaterial({
-      color: 0xA8CEFC,
-      size: 40
-    });
+        particles = [],
+        pMaterial = new THREE.PointsMaterial({
+          color: 0xA8CEFC,
+          size: 40
+        });
 
-// now create the individual particles
-for (var p = 0; p < particleCount; p++) {
+      // now create the individual particles
+      for (var p = 0; p < particleCount; p++) {
 
-  // create a particle with random
-  // position values, -250 -> 250
-  var pX = -1000 + (Math.random() * 200 ),
-      pY = Math.random() * 3000 - 1500 ,
-      pZ = Math.random() *  80-40 ,
-      particle =  new THREE.Vector3(pX, pY, pZ);
+        // create a particle with random
+        // position values, -250 -> 250
+        var pX = -1000 + (Math.random() * 200),
+          pY = Math.random() * 3000 - 1500,
+          pZ = Math.random() * 80 - 40,
+          particle = new THREE.Vector3(pX, pY, pZ);
 
-  // add it to the geometry
-  particles.push(particle);
-}
- part = new THREE.BufferGeometry().setFromPoints( particles );
-// create the particle system
-particleSystem  = new THREE.Points(
-  part,
-    pMaterial);
-particleSystem.position.x = -1000;
-// add it to the scene
-scene.add(particleSystem);
+        // add it to the geometry
+        particles.push(particle);
+      }
+      part = new THREE.BufferGeometry().setFromPoints(particles);
+      // create the particle system
+      particleSystem = new THREE.Points(
+        part,
+        pMaterial);
+      particleSystem.position.x = -1000;
+      // add it to the scene
+      scene.add(particleSystem);
 
-    ////////////////////////////////////////////////////////////Particulas
+      ////////////////////////////////////////////////////////////Particulas
 
     }
 
@@ -380,31 +444,33 @@ scene.add(particleSystem);
     }
 
     function update() {
+      var delta2 = clock2.getDelta();
+      customUniforms.time.value += delta2;
       ////////////////////////////////Para lass particulas
-    particleSystem.rotation.y += 0.01;
-     
+      particleSystem.rotation.y += 0.01;
+
       const positions = part.attributes.position.array
-for (let i = 0; i < positions.length; i += 3) {
-    const v = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]).multiplyScalar(1);
-    
-    positions[i] = v.x
-    positions[i + 1] = v.y + 50
-    positions[i + 2] = v.z 
+      for (let i = 0; i < positions.length; i += 3) {
+        const v = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]).multiplyScalar(1);
 
-    if(positions[i+1] > 3000){
-      positions[i] = -1000 + (Math.random() * 40)
-      positions[i+1] = 0
-      positions[i+2] = Math.random() *  80 - 40
-    }
-    if(positions[i+1] > 20){
-      positions[i ] = v.x + ((Math.random() * 100 - 50)* 1.3)
-      positions[i + 2] = v.z  + ((Math.random() * 100 - 50)* 1.3)
-    }
-    
-}
-particleSystem.geometry.attributes.position.needsUpdate = true
+        positions[i] = v.x
+        positions[i + 1] = v.y + 50
+        positions[i + 2] = v.z
 
-////////////////////////////////Para lass particulas
+        if (positions[i + 1] > 3000) {
+          positions[i] = -1000 + (Math.random() * 40)
+          positions[i + 1] = 0
+          positions[i + 2] = Math.random() * 80 - 40
+        }
+        if (positions[i + 1] > 20) {
+          positions[i] = v.x + ((Math.random() * 100 - 50) * 1.3)
+          positions[i + 2] = v.z + ((Math.random() * 100 - 50) * 1.3)
+        }
+
+      }
+      particleSystem.geometry.attributes.position.needsUpdate = true
+
+      ////////////////////////////////Para lass particulas
 
       function colisionBloques() {
 
@@ -461,7 +527,7 @@ particleSystem.geometry.attributes.position.needsUpdate = true
         battleShip2.rotation.y = 0;
       }
       //#endregion
-      
+
       /*if(myPlayer != null){
         
 
@@ -484,9 +550,9 @@ particleSystem.geometry.attributes.position.needsUpdate = true
       powerUpHeal.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpShield.rotation.y += THREE.Math.degToRad(45) * delta;
       powerUpRocket.rotation.y += THREE.Math.degToRad(45) * delta;
-   
 
-      
+
+
       colisionBloques();
 
       controls.update();
@@ -494,7 +560,8 @@ particleSystem.geometry.attributes.position.needsUpdate = true
     }
 
     function render() {
-      texturat.offset.x += .0003;
+      //texturat.offset.x += .0003;
+      
       renderer.render(scene, camera);
     }
 
