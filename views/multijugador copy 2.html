@@ -116,6 +116,57 @@
     var powerUpHeal2;
     //IMAGES SKYDOME
 
+  //////////////////////////////////Shaders
+
+  const _VS = `	 
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+
+        gl_Position =   projectionMatrix * 
+                        modelViewMatrix * 
+                        vec4(position,1.0);
+    }
+            `;
+    const _PS = ` 
+    uniform sampler2D baseTexture;
+uniform float baseSpeed;
+uniform sampler2D noiseTexture;
+uniform float noiseScale;
+uniform float alpha;
+uniform float time;
+varying vec2 vUv;
+
+void main() 
+{
+    vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;
+    vec4 noise = texture2D( noiseTexture, uvTimeShift );
+    vec2 uvNoisyTimeShift = vUv + noiseScale * vec2( noise.r , noise.g );
+    vec4 baseColor = texture2D( baseTexture, uvNoisyTimeShift );
+    baseColor.a = alpha;
+    gl_FragColor = baseColor;
+}
+`;
+
+    var clock2 = new THREE.Clock();
+
+    var noiseTexture = new THREE.ImageUtils.loadTexture('../views/src/js/imagenes/cloud.png');
+    noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
+
+    var baseTexture = new THREE.ImageUtils.loadTexture("../views/src/js/imagenes/waterpurple.jpg");
+    baseTexture.wrapS = baseTexture.wrapT = THREE.RepeatWrapping;
+
+    // create global uniforms object so its accessible in update method
+    var customUniforms = {
+      baseTexture: { type: "t", value: baseTexture },
+      baseSpeed: { type: "f", value: 0.02 },
+      noiseTexture: { type: "t", value: noiseTexture },
+      noiseScale: { type: "f", value: 1 },
+      alpha: { type: "f", value: 1.0 },
+      time: { type: "f", value: 1.0 }
+    };
+    /////////////////////////////Shaders
 
 
 
@@ -202,15 +253,22 @@
       scene.add(ambientLight);
       scene.add(directionalLight);
 
-      // FLOOR
-      texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/waterpurple.jpg");
-      texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
-      texturat.repeat.set(0.6, 0.6);
-      var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
-      var floorGeometry = new THREE.CircleGeometry(5000, 32);
-      var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+       // FLOOR
+      //texturat = new THREE.TextureLoader().load("../views/src/js/imagenes/lava2.jpg");
+      //texturat.wrapS = texturat.wrapT = THREE.RepeatWrapping;
+      //texturat.repeat.set(0.6, 0.6);
+     // var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
+     var floorGeometry = new THREE.CircleGeometry(5000, 32);
+      var floor = new THREE.Mesh(floorGeometry, new THREE.ShaderMaterial({
+
+        uniforms: customUniforms,
+        vertexShader: _VS,
+        fragmentShader: _PS,
+
+      }));
+
       floor.position.y = -0.5;
-      floor.rotation.x = Math.PI / 2;
+      floor.rotation.x = -Math.PI / 2;
       scene.add(floor);
       var cubemat = [
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_ft.png"), side: THREE.BackSide }),
@@ -373,7 +431,8 @@
     }
 
     function update() {
-
+      var delta2 = clock2.getDelta();
+      customUniforms.time.value += delta2;
       function colisionBloques() {
 
         if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
@@ -462,7 +521,7 @@
 
     function render() {
      
-      texturat.offset.x += .00005;
+      //texturat.offset.x += .00005;
       renderer.render(scene, camera);
     }
 
