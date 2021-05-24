@@ -3,7 +3,26 @@ function SoundClick() {
   aud.play()
 }
 
+
 var currImageGlobal = 0;
+
+function musicPlay(){
+  var playMusic = document.getElementById("soundLoop");
+  var volume = window.localStorage.getItem("volume");
+
+  if(volume){
+    playMusic.volume = volume/10;
+  }else{
+    play.volume = 0.5;
+  }
+  playMusic.loop = true;
+  playMusic.play();
+}
+
+//$(document).ready(function(){
+//  document.getElementById("soundLoop").play;
+//});
+
 
 $("#btn_pc").click(function () {
   
@@ -144,6 +163,7 @@ function carousel(root) {
       if (t.classList.contains('next')) {
 
         currImage++;
+        
         if (currImage > 2)
           currImage = 0;
       }
