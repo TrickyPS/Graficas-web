@@ -35,6 +35,8 @@
 
 <body>
   <audio id="soundclick" src="assets/button-34.wav"></audio>
+  <audio id="soundLoop" src="assets/barcos-music-epic.mp3" type="audio/mp3"  autoplay="true"  muted="true" ></audio>
+  
 
   <div class="cont">
 
@@ -171,13 +173,14 @@
     <p>Compartir.</p>
     <div class="contCompartir">
       <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button"
-      data-size="small"><a target="_blank"
-        href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse"
-        class="fb-xfbml-parse-ignore">Compartir</a></div>
-  
-    <a  class="btn_twitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fparzibyte.me%2Fblog&hashtags=TheCuriseWar,Juega,GraficasWeb"
-      target="_blank"><i class="fab fa-twitter"></i>Compartir</a>
-     </div>
+        data-size="small"><a target="_blank"
+          href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse"
+          class="fb-xfbml-parse-ignore">Compartir</a></div>
+
+      <a class="btn_twitter"
+        href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fparzibyte.me%2Fblog&hashtags=TheCuriseWar,Juega,GraficasWeb"
+        target="_blank"><i class="fab fa-twitter"></i>Compartir</a>
+    </div>
   </div>
   <div id="m_configuracion" class="modal ">
     <p>Configuración</p>
@@ -186,11 +189,23 @@
       <p>Volumen</p>
     </div>
     <div class="range-slider">
-      <input class="range-slider__range" type="range" value="100" min="0" max="500">
-      <span class="range-slider__value">0</span>
+      <input class="range-slider__range" id="rangeid" type="range" value="5" min="0" max="10">
+      <script>
+        var volume = window.localStorage.getItem("volume");
+
+        if (volume) {
+          document.getElementById("rangeid").value = volume;
+        } else {
+          document.getElementById("rangeid").value = 0.5;
+        }
+        function range() {
+          var range = document.getElementById("rangeid").value;
+          window.localStorage.setItem("volume", range);
+        }
+      </script>
     </div>
     <div style="text-align-last: center; width: 100%;">
-      <button class="btn static" onclick="SoundClick()">
+      <button class="btn static" onclick="SoundClick(); range(); musicPlay()">
         <span class="btn__inner static">
           <span class="btn__slide" static></span>
           <span class="btn__content static">Guardar</span>
