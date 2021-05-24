@@ -125,7 +125,7 @@
   <div id="ThreeJS" style="position: absolute; z-index: 1; left:0px; top:0px"></div>
   <h1 style="position:absolute; z-index:2; padding-left: 25px; color: white; left: 0;" id="namePlayer1">Player 1</h1>
 
-<!-- HUD -->
+  <!-- HUD -->
   <div style="position:absolute; z-index:2; padding-left: 25px; color: white; left: 0; bottom: 0; display:flex;">
     <img src="src/icons/Ball_Icon.png" id="ballImagePlayer1" style="width: 70px; height: 70px;" alt="">
     <h1 style="padding: 0 10px;" id="ballPlayer1">1</h1>
@@ -188,7 +188,7 @@
     var bulletsPlayer = 5;
 
     var objetosCol = [];
-
+    var objetosCol2 = [];
     var tiemposito = 0;
 
     // MOVER TODO ESTO A UNA CLASE 
@@ -207,13 +207,67 @@
     var gameOver = false;
 
 
-    $(document).ready( () => {
+    $(document).ready(() => {
       usP1 = JSON.parse(window.localStorage.getItem('user'));
 
       $('#namePlayer1').empty();
       $('#namePlayer1').append(usP1.userName);
 
     });
+    /////////////////Shaders
+    const _VS = `	 
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+
+        gl_Position =   projectionMatrix * 
+                        modelViewMatrix * 
+                        vec4(position,1.0);
+    }
+            `;
+    const _PS = ` 
+    uniform sampler2D baseTexture;
+uniform float baseSpeed;
+uniform sampler2D noiseTexture;
+uniform float noiseScale;
+uniform float alpha;
+uniform float time;
+varying vec2 vUv;
+
+void main() 
+{
+    vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;
+    vec4 noise = texture2D( noiseTexture, uvTimeShift );
+    vec2 uvNoisyTimeShift = vUv + noiseScale * vec2( noise.r , noise.g );
+    vec4 baseColor = texture2D( baseTexture, uvNoisyTimeShift );
+    baseColor.a = alpha;
+    gl_FragColor = baseColor;
+}
+`;
+
+
+    var clock2 = new THREE.Clock();
+
+
+    var noiseTexture = new THREE.ImageUtils.loadTexture('../views/src/js/imagenes/cloud.png');
+    noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
+
+    var lavaTexture = new THREE.ImageUtils.loadTexture('../views/src/js/imagenes/water512.jpg');
+    lavaTexture.wrapS = lavaTexture.wrapT = THREE.RepeatWrapping;
+
+
+
+    // create global uniforms object so its accessible in update method
+    var customUniforms = {
+      baseTexture: { type: "t", value: lavaTexture },
+      baseSpeed: { type: "f", value: 0.02 },
+      noiseTexture: { type: "t", value: noiseTexture },
+      noiseScale: { type: "f", value: 1 },
+      alpha: { type: "f", value: 1.0 },
+      time: { type: "f", value: 1.0 }
+    };
+
 
 
     // standard global variables
@@ -294,9 +348,15 @@
       texturat.repeat.set(0.6, 0.6);
       var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
       var floorGeometry = new THREE.CircleGeometry(5000, 32);
-      var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      var floor = new THREE.Mesh(floorGeometry, new THREE.ShaderMaterial({
+
+        uniforms: customUniforms,
+        vertexShader: _VS,
+        fragmentShader: _PS,
+
+      }));
       floor.position.y = -0.5;
-      floor.rotation.x = Math.PI / 2;
+      floor.rotation.x = 4.7;
       scene.add(floor);
       var cubemat = [
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/miramar_ft.png"), side: THREE.BackSide }),
@@ -384,7 +444,7 @@
         pared.name = "pared";
 
         scene.add(pared);
-
+        objetosCol2.push(pared);
       });
 
 
@@ -407,13 +467,13 @@
         rock2.scale.x = 2;
         rock2.name = "rock2";
         scene.add(rock2);
-
-
+        objetosCol2.push(rock);
+        objetosCol2.push(rock2);
 
 
       });
 
-    
+
       loader.load('bullet.gltf', (gltf) => {
 
         bullet = gltf.scene;
@@ -466,6 +526,9 @@
       ////////////////////////////////Para lass particulas
       particleSystem.rotation.y += 0.01;
 
+      var delta2 = clock2.getDelta();
+      customUniforms.time.value += delta2;
+
       const positions = part.attributes.position.array
       for (let i = 0; i < positions.length; i += 3) {
         const v = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]).multiplyScalar(1);
@@ -492,7 +555,7 @@
       function colisionBloques() {
 
         if (Math.sqrt(Math.pow((battleShip.position.x - pared.position.x), 2) + Math.pow((battleShip.position.z - pared.position.z), 2)) < 300) {
-          console.log("joto");
+
         }
 
       }
@@ -522,11 +585,11 @@
         battleShip.rotation.y = 3.14159;
       }
 
-      if(canvasX + 10 < 480 && inicio == false || canvasX <= 150) {
+      if (canvasX + 10 < 480 && inicio == false || canvasX <= 150) {
         inicio = false;
         target.position.x += valocidadTarget;
         target3.position.x += valocidadTarget;
-        canvasX += 1; 
+        canvasX += 1;
       } else {
         inicio = true;
         target.position.x -= valocidadTarget;
@@ -534,11 +597,11 @@
         canvasX -= 1;
       }
 
-      if(canvasX + 10 < 480 && inicio == false || canvasX <= 150) {
+      if (canvasX + 10 < 480 && inicio == false || canvasX <= 150) {
         inicio = false;
         target2.position.x -= valocidadTarget;
         target4.position.x -= valocidadTarget;
-        canvasX += 1; 
+        canvasX += 1;
       } else {
         inicio = true;
         target2.position.x += valocidadTarget;
@@ -652,20 +715,20 @@
 
               }
 
-              if(objeto.name == "target") {
-                scene.remove(objeto);  
+              if (objeto.name == "target") {
+                scene.remove(objeto);
                 isAliveTarget = false;
-              } 
-              else if(objeto.name == "target2") {
-                scene.remove(objeto);  
+              }
+              else if (objeto.name == "target2") {
+                scene.remove(objeto);
                 isAliveTarget2 = false;
               }
-              else if(objeto.name == "target3") {
-                scene.remove(objeto);  
+              else if (objeto.name == "target3") {
+                scene.remove(objeto);
                 isAliveTarget3 = false;
               }
-              else if(objeto.name == "target4") {
-                scene.remove(objeto);  
+              else if (objeto.name == "target4") {
+                scene.remove(objeto);
                 isAliveTarget4 = false;
               }
 
@@ -682,29 +745,71 @@
               scene.remove(bullet);
             }
           }
+
+
         });
       }
     }
 
     function colisionPlayer1() {
 
-      if (objetosCol != undefined && objetosCol != null) {
-        objetosCol.forEach(objeto => {
+      if (objetosCol2 != undefined && objetosCol2 != null) {
+        objetosCol2.forEach(objeto => {
           if (objeto != undefined) {
             if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 300) {
+             
+              if (keyboard.pressed("A")) {
+                battleShip.position.z = battleShip.position.z - 100;
+               
+              }
+              else if (keyboard.pressed("D")) {
+                battleShip.position.z = battleShip.position.z + 100;
+             
+              }
+              else if (keyboard.pressed("W")) {
+                battleShip.position.x = battleShip.position.x + 100;
+             
+              }
+              else if (keyboard.pressed("S")) {
+                battleShip.position.x = battleShip.position.x - 100;
+               
+              }
 
             }
+            if(objeto.name == "pared"){
+              if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 1000) {
+             
+             if (keyboard.pressed("A")) {
+               battleShip.position.z = battleShip.position.z - 100;
+              
+             }
+             else if (keyboard.pressed("D")) {
+               battleShip.position.z = battleShip.position.z + 100;
+            
+             }
+             else if (keyboard.pressed("W")) {
+               battleShip.position.x = battleShip.position.x + 100;
+            
+             }
+             else if (keyboard.pressed("S")) {
+               battleShip.position.x = battleShip.position.x - 100;
+              
+             }
+            }
+
+            }
+            
           }
         });
       }
     }
 
     function checkTargetsAlive() {
-      if(isAliveTarget == false && isAliveTarget2 == false && isAliveTarget3 == false && isAliveTarget4 == false && gameOver == false) {
+      if (isAliveTarget == false && isAliveTarget2 == false && isAliveTarget3 == false && isAliveTarget4 == false && gameOver == false) {
         $('#m_end_game_win').modal('show');
         onTimesUp();
         gameOver = true;
-       
+
         var updateUser1 = new User(usP1.id, null, null, null, null).updateUserLocalStorage("user");
         var userWin = new User(usP1.id, null, null, null, parseInt(usP1.totalPoints) + 1).updateTotalPoints();
         var updateUser1 = new User(usP1.id, null, null, null, null).updateUserLocalStorage("user");

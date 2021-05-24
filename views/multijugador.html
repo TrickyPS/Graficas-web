@@ -168,6 +168,7 @@
     var bulletsPlayerEnemy = 5;
 
     var objetosCol = []
+    var objetosCol2 = []
     var objetosColPlayer2 = []
 
     var tiemposito = 0;
@@ -414,6 +415,7 @@ var customUniforms = {
 
         scene.add(pared);
 
+        objetosCol2.push(pared);
       });
 
 
@@ -437,8 +439,8 @@ var customUniforms = {
         rock2.name = "rock2";
         scene.add(rock2);
 
-
-
+        objetosCol2.push(rock);
+        objetosCol2.push(rock2);
 
       });
 
@@ -446,8 +448,8 @@ var customUniforms = {
 
         powerUpHeal = gltf.scene;
 
-        powerUpHeal.position.x = 1200;
-        powerUpHeal.position.z = 1000;
+        powerUpHeal.position.x = 800;
+        powerUpHeal.position.z = 0;
         powerUpHeal.position.y = 100;
 
         powerUpHeal.name = "powerUpHeal";
@@ -461,8 +463,8 @@ var customUniforms = {
 
         powerUpShield = gltf.scene;
 
-        powerUpShield.position.x = -1200;
-        powerUpShield.position.z = -1000;
+        powerUpShield.position.x = 1000;
+        powerUpShield.position.z = 0;
         powerUpShield.position.y = 100;
 
         powerUpShield.name = "powerUpShield";
@@ -476,8 +478,8 @@ var customUniforms = {
 
         powerUpRocket = gltf.scene;
 
-        powerUpRocket.position.x = 600;
-        powerUpRocket.position.z = 100;
+        powerUpRocket.position.x = 1300;
+        powerUpRocket.position.z = 0;
         powerUpRocket.position.y = 100;
 
         powerUpRocket.name = "powerUpRocket";
@@ -825,6 +827,72 @@ var customUniforms = {
 
     function colisionPlayer1() {
 
+
+
+      if (objetosCol2 != undefined && objetosCol2 != null) {
+  objetosCol2.forEach(objeto => {
+    if (objeto != undefined) {
+      if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 200) {
+       
+        if (keyboard.pressed("left")) {
+          battleShip.position.z = battleShip.position.z - 100;
+         
+        }
+        else if (keyboard.pressed("right")) {
+          battleShip.position.z = battleShip.position.z + 100;
+       
+        }
+        else if (keyboard.pressed("up")) {
+          battleShip.position.x = battleShip.position.x + 100;
+       
+        }
+        else if (keyboard.pressed("down")) {
+          battleShip.position.x = battleShip.position.x - 100;
+         
+        }
+
+      }
+      if(objeto.name == "pared"){
+        if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 1300) {
+       
+       if (keyboard.pressed("left")) {
+         battleShip.position.z = battleShip.position.z - 100;
+        
+       }
+       else if (keyboard.pressed("right")) {
+         battleShip.position.z = battleShip.position.z + 100;
+      
+       }
+       else if (keyboard.pressed("up")) {
+         battleShip.position.x = battleShip.position.x + 100;
+      
+       }
+       else if (keyboard.pressed("down")) {
+         battleShip.position.x = battleShip.position.x - 100;
+        
+       }
+      }
+
+      }
+      
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       if (objetosCol != undefined && objetosCol != null) {
         objetosCol.forEach(objeto => {
           if (objeto != undefined) {
@@ -897,6 +965,72 @@ var customUniforms = {
     }
 
     function colisionPlayer2() {
+
+
+      if (objetosCol2 != undefined && objetosCol2 != null) {
+  objetosCol2.forEach(objeto => {
+    if (objeto != undefined) {
+      if (Math.sqrt(Math.pow((battleShip2.position.x - objeto.position.x), 2) + Math.pow((battleShip2.position.z - objeto.position.z), 2)) < 200) {
+       
+        if (keyboard.pressed("A")) {
+          battleShip2.position.z = battleShip2.position.z - 100;
+         
+        }
+        else if (keyboard.pressed("D")) {
+          battleShip2.position.z = battleShip2.position.z + 100;
+       
+        }
+        else if (keyboard.pressed("W")) {
+          battleShip2.position.x = battleShip2.position.x + 100;
+       
+        }
+        else if (keyboard.pressed("S")) {
+          battleShip2.position2.x = battleShip2.position.x - 100;
+         
+        }
+
+      }
+      if(objeto.name == "pared"){
+        if (Math.sqrt(Math.pow((battleShip2.position.x - objeto.position.x), 2) + Math.pow((battleShip2.position.z - objeto.position.z), 2)) < 1300) {
+       
+       if (keyboard.pressed("A")) {
+         battleShip2.position.z = battleShip2.position.z - 100;
+        
+       }
+       else if (keyboard.pressed("D")) {
+         battleShip2.position.z = battleShip2.position.z + 100;
+      
+       }
+       else if (keyboard.pressed("W")) {
+         battleShip2.position.x = battleShip2.position.x + 100;
+      
+       }
+       else if (keyboard.pressed("S")) {
+         battleShip2.position.x = battleShip2.position.x - 100;
+        
+       }
+      }
+
+      }
+      
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       if (objetosColPlayer2 != undefined && objetosColPlayer2 != null) {
         objetosColPlayer2.forEach(objeto => {

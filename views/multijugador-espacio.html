@@ -167,6 +167,7 @@
     var bulletsPlayerEnemy = 5;
 
     var objetosCol = []
+    var objetosCol2 = []
     var objetosColPlayer2 = []
 
     var tiemposito = 0;
@@ -195,6 +196,73 @@
       $('#namePlayer2').empty();
       $('#namePlayer2').append(usP2.userName);
     });
+
+
+
+
+
+
+/////////////////Shaders
+const _VS = `	 
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+
+        gl_Position =   projectionMatrix * 
+                        modelViewMatrix * 
+                        vec4(position,1.0);
+    }
+            `;
+    const _PS = ` 
+    uniform sampler2D baseTexture;
+uniform float baseSpeed;
+uniform sampler2D noiseTexture;
+uniform float noiseScale;
+uniform float alpha;
+uniform float time;
+varying vec2 vUv;
+
+void main() 
+{
+    vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;
+    vec4 noise = texture2D( noiseTexture, uvTimeShift );
+    vec2 uvNoisyTimeShift = vUv + noiseScale * vec2( noise.r , noise.g );
+    vec4 baseColor = texture2D( baseTexture, uvNoisyTimeShift );
+    baseColor.a = alpha;
+    gl_FragColor = baseColor;
+}
+`;
+
+
+var clock2 = new THREE.Clock();
+
+
+var noiseTexture = new THREE.ImageUtils.loadTexture( '../views/src/js/imagenes/cloud.png');
+noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
+
+var lavaTexture = new THREE.ImageUtils.loadTexture( '../views/src/js/imagenes/waterpurple.jpg' );
+lavaTexture.wrapS = lavaTexture.wrapT = THREE.RepeatWrapping; 
+
+
+
+// create global uniforms object so its accessible in update method
+var customUniforms = {
+    baseTexture:  { type: "t", value: lavaTexture },
+    baseSpeed:    { type: "f", value: 0.02 },
+    noiseTexture: { type: "t", value: noiseTexture },
+    noiseScale:   { type: "f", value: 1 },
+    alpha:        { type: "f", value: 1.0 },
+    time:         { type: "f", value: 1.0 }
+};
+
+
+
+
+
+
+
+
 
 
     // standard global variables
@@ -283,9 +351,15 @@
       texturat.repeat.set(0.6, 0.6);
       var floorMaterial = new THREE.MeshBasicMaterial({ map: texturat, side: THREE.DoubleSide });
       var floorGeometry = new THREE.CircleGeometry(5000, 32);
-      var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      var floor = new THREE.Mesh(floorGeometry, new THREE.ShaderMaterial({
+
+uniforms: customUniforms,
+vertexShader: _VS ,
+fragmentShader: _PS,
+
+}));
       floor.position.y = -0.5;
-      floor.rotation.x = Math.PI / 2;
+      floor.rotation.x = 4.7;
       scene.add(floor);
       var cubemat = [
         new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("../views/src/js/imagenes/skyast_ft.png"), side: THREE.BackSide }),
@@ -343,7 +417,7 @@
         pared.name = "pared";
 
         scene.add(pared);
-
+        objetosCol2.push(pared);
       });
 
 
@@ -418,19 +492,8 @@
         rock2.name = "rock2";
         scene.add(rock2);
 
-        rock3 = rock.clone();
-
-        rock3.position.x = 0;
-        rock3.position.z = -2000;
-        rock3.name = "rock3";
-        scene.add(rock3);
-
-        rock4 = rock.clone();
-
-        rock4.position.x = 0;
-        rock4.position.z = 2000;
-        rock4.name = "rock4";
-        scene.add(rock4);
+        objetosCol2.push(rock);
+        objetosCol2.push(rock2);
 
 
       });
@@ -446,10 +509,10 @@
       });
 
       //////////////////////////////Particulas
-      particleCount = 15000,
+      particleCount = 10,
         particles = [],
         pMaterial = new THREE.PointsMaterial({
-          color: 0xA8CEFC,
+          map: new THREE.TextureLoader().load("../views/src/js/imagenes/greenl.png"),
           size: 40
         });
 
@@ -471,7 +534,7 @@
       particleSystem = new THREE.Points(
         part,
         pMaterial);
-      particleSystem.position.x = -1000;
+      particleSystem.position.x = 1000;
       // add it to the scene
       scene.add(particleSystem);
 
@@ -487,7 +550,8 @@
 
     function update() {
       ////////////////////////////////Para lass particulas
-      particleSystem.rotation.y += 0.01;
+      var delta2 = clock2.getDelta();
+      customUniforms.time.value += delta2;
 
       const positions = part.attributes.position.array
       for (let i = 0; i < positions.length; i += 3) {
@@ -772,6 +836,59 @@
 
     function colisionPlayer1() {
 
+      if (objetosCol2 != undefined && objetosCol2 != null) {
+  objetosCol2.forEach(objeto => {
+    if (objeto != undefined) {
+      if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 200) {
+       
+        if (keyboard.pressed("left")) {
+          battleShip.position.z = battleShip.position.z - 100;
+         
+        }
+        else if (keyboard.pressed("right")) {
+          battleShip.position.z = battleShip.position.z + 100;
+       
+        }
+        else if (keyboard.pressed("up")) {
+          battleShip.position.x = battleShip.position.x + 100;
+       
+        }
+        else if (keyboard.pressed("down")) {
+          battleShip.position.x = battleShip.position.x - 100;
+         
+        }
+
+      }
+      if(objeto.name == "pared"){
+        if (Math.sqrt(Math.pow((battleShip.position.x - objeto.position.x), 2) + Math.pow((battleShip.position.z - objeto.position.z), 2)) < 700) {
+       
+       if (keyboard.pressed("left")) {
+         battleShip.position.z = battleShip.position.z - 100;
+        
+       }
+       else if (keyboard.pressed("right")) {
+         battleShip.position.z = battleShip.position.z + 100;
+      
+       }
+       else if (keyboard.pressed("up")) {
+         battleShip.position.x = battleShip.position.x + 100;
+      
+       }
+       else if (keyboard.pressed("down")) {
+         battleShip.position.x = battleShip.position.x - 100;
+        
+       }
+      }
+
+      }
+      
+    }
+  });
+}
+
+
+
+      
       if (objetosCol != undefined && objetosCol != null) {
         objetosCol.forEach(objeto => {
           if (objeto != undefined) {
@@ -844,6 +961,68 @@
     }
 
     function colisionPlayer2() {
+
+      if (objetosCol2 != undefined && objetosCol2 != null) {
+  objetosCol2.forEach(objeto => {
+    if (objeto != undefined) {
+      if (Math.sqrt(Math.pow((battleShip2.position.x - objeto.position.x), 2) + Math.pow((battleShip2.position.z - objeto.position.z), 2)) < 200) {
+       
+        if (keyboard.pressed("A")) {
+          battleShip2.position.z = battleShip2.position.z - 100;
+         
+        }
+        else if (keyboard.pressed("D")) {
+          battleShip2.position.z = battleShip2.position.z + 100;
+       
+        }
+        else if (keyboard.pressed("W")) {
+          battleShip2.position.x = battleShip2.position.x + 100;
+       
+        }
+        else if (keyboard.pressed("S")) {
+          battleShip2.position2.x = battleShip2.position.x - 100;
+         
+        }
+
+      }
+      if(objeto.name == "pared"){
+        if (Math.sqrt(Math.pow((battleShip2.position.x - objeto.position.x), 2) + Math.pow((battleShip2.position.z - objeto.position.z), 2)) < 700) {
+       
+       if (keyboard.pressed("A")) {
+         battleShip2.position.z = battleShip2.position.z - 100;
+        
+       }
+       else if (keyboard.pressed("D")) {
+         battleShip2.position.z = battleShip2.position.z + 100;
+      
+       }
+       else if (keyboard.pressed("W")) {
+         battleShip2.position.x = battleShip2.position.x + 100;
+      
+       }
+       else if (keyboard.pressed("S")) {
+         battleShip2.position.x = battleShip2.position.x - 100;
+        
+       }
+      }
+
+      }
+      
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
       if (objetosColPlayer2 != undefined && objetosColPlayer2 != null) {
         objetosColPlayer2.forEach(objeto => {
