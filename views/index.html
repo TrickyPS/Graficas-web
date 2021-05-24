@@ -72,12 +72,12 @@
       <!--Carrusel-->
       <div class="carousel static" id="carousel" style="display: none;" data-gap="20" data-bfc>
         <figure class="static">
-          <img class="static" src="assets/oceano.jpg" alt="">
-          <img class="static" src="assets/playa.jpg" alt="">
-          <img class="static" src="assets/hielo.jpg" alt="">
-          <img src="assets/oceano.jpg" alt="">
+          <img class="static" id="playaLevel" src="assets/playa.jpg" alt="">
+          <img class="static" id="lavaLevel" src="assets/lava.jpg" alt="">
+          <img class="static" id="spaceLevel" src="assets/waterpurple.jpg" alt="">
           <img src="assets/playa.jpg" alt="">
-          <img src="assets/hielo.jpg" alt="">
+          <img src="assets/lava.jpg" alt="">
+          <img src="assets/waterpurple.jpg" alt="">
 
         </figure>
         <nav>
@@ -106,7 +106,7 @@
 
 
 
-      <a class="btn static" style="display: none;" onclick="SoundClick()" id="btn_empezar" href="play.html">
+      <a class="btn static" style="display: none;" onclick="SoundClick()" id="btn_empezar" href="#">
         <span class="btn__inner static">
           <span class="btn__slide" static></span>
           <span class="btn__content static">Empezar</span>
@@ -245,7 +245,7 @@
       <label for="clave">Contraseña:</label>
       <input type="password" id="clavePlayer2"><br>
       <div style="text-align-last: center; width: 100%;">
-        <button class="btn static" onclick="SoundClick()">
+        <button class="btn static" id="btn_signin_player2" onclick="SoundClick()">
           <span class="btn__inner static">
             <span class="btn__slide" static></span>
             <span class="btn__content static">Entrar</span>
@@ -283,6 +283,10 @@
       $('#btn_multi').click(() => {
         $('#m_signin_player2').modal('show');
       });
+
+      if(localStorage.getItem("user2")) {
+        localStorage.removeItem("user2");
+      }
 
       getScores();
 
